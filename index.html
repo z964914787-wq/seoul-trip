@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="theme-color" content="#f2f2f7" />
+<title>首尔短途</title>
+<style>
+  :root {
+    --ink: #1c1c1e;
+    --label: #3a3a3c;
+    --muted: #8e8e93;
+    --fill: rgba(255,255,255,.62);
+    --fill-solid: rgba(255,255,255,.78);
+    --stroke: rgba(255,255,255,.55);
+    --stroke-soft: rgba(60,60,67,.08);
+    --accent: #007aff;
+    --accent-soft: rgba(0,122,255,.12);
+    --ok: #34c759;
+    --warn: #ff9f0a;
+    --nav-h: 66px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+    --radius: 20px;
+    --shadow: 0 8px 32px rgba(0,0,0,.06);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: var(--font);
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse 90% 55% at 10% -10%, rgba(100,160,255,.22), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgba(180,200,220,.28), transparent 50%),
+      radial-gradient(ellipse 80% 40% at 50% 110%, rgba(160,190,230,.18), transparent 55%),
+      #f2f2f7;
+    background-attachment: fixed;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding-top: var(--safe-t);
+    padding-bottom: calc(var(--nav-h) + var(--safe-b) + 12px);
+  }
+  a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  button, input, select { font: inherit; color: inherit; }
+
+  .glass {
+    background: var(--fill);
+    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(180%) blur(28px);
+    border: 1px solid var(--stroke);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.65);
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 16px 14px;
+    background: rgba(242,242,247,.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: .5px solid rgba(60,60,67,.12);
+  }
+  .topbar .brand {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .topbar .sub {
+    margin-top: 1px;
+    font-size: .72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .icon-btn {
+    border: none;
+    background: rgba(120,120,128,.12);
+    border-radius: 980px;
+    padding: 7px 12px;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .panel { display: none; padding: 14px 14px 28px; animation: rise .28s ease; }
+  .panel.active { display: block; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .hero {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 220px;
+    padding: 24px 20px;
+    color: #fff;
+    margin-bottom: 14px;
+    background:
+      linear-gradient(165deg, rgba(20,30,50,.35) 0%, rgba(20,30,50,.62) 100%),
+      url("covers/01.jpg") center/cover no-repeat,
+      linear-gradient(145deg, #5b7cfa, #8aa4ff);
+    box-shadow: 0 16px 40px rgba(40,60,100,.18);
+  }
+  .hero .eyebrow {
+    display: block;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    opacity: .72;
+  }
+  .hero h1 {
+    margin: 14px 0 6px;
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.2;
+  }
+  .hero p {
+    margin: 0;
+    font-size: .9rem;
+    opacity: .88;
+    font-weight: 400;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .chip {
+    font-size: .7rem;
+    font-weight: 500;
+    padding: 4px 0;
+    margin-right: 12px;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    border-bottom: .5px solid rgba(255,255,255,.35);
+    opacity: .9;
+  }
+
+  .card {
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    background: var(--fill-solid);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .card h3 {
+    margin: 0 0 3px;
+    font-size: .95rem;
+    font-weight: 650;
+    letter-spacing: -.01em;
+  }
+  .muted { color: var(--muted); font-size: .84rem; font-weight: 400; }
+  .day-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    margin: 0 0 4px;
+  }
+  .day-label {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 650;
+    letter-spacing: .04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: 980px;
+    margin: 0 0 8px;
+  }
+
+  .time {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 650;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 8px;
+    border-radius: 7px;
+    margin-bottom: 5px;
+  }
+  .tag {
+    display: inline-block;
+    font-size: .66rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    margin: 3px 4px 0 0;
+    border-radius: 980px;
+    background: rgba(120,120,128,.12);
+    color: var(--label);
+  }
+  .tag.food {
+    background: rgba(255,159,10,.14);
+    color: #b25e00;
+  }
+  .note {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #248a3d;
+    margin: 8px 0 0;
+    padding: 9px 11px;
+    background: rgba(52,199,89,.1);
+    border-radius: 12px;
+  }
+  .food-box {
+    margin-top: 12px;
+    padding: 11px 12px;
+    background: rgba(255,159,10,.08);
+    border: .5px solid rgba(255,159,10,.2);
+    border-radius: 14px;
+    font-size: .83rem;
+    font-weight: 500;
+  }
+
+  .check-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 13px 0;
+    border-top: .5px solid rgba(60,60,67,.1);
+  }
+  .check-row:first-child { border-top: none; padding-top: 2px; }
+  .check-row input {
+    margin-top: 2px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .check-row.done h3,
+  .check-row.done p { opacity: .35; text-decoration: line-through; }
+  .check-row.done .time { opacity: .4; }
+
+  .map-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    padding: 8px 14px;
+    border-radius: 980px;
+    background: var(--accent);
+    color: #fff !important;
+    font-size: .8rem;
+    font-weight: 600;
+  }
+  .link-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini {
+    text-align: left;
+    border: none;
+    border-radius: 16px;
+    padding: 13px;
+    background: rgba(255,255,255,.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.65);
+    box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    transition: transform .15s ease;
+  }
+  .mini:active { transform: scale(.98); }
+  .mini .d {
+    margin: 0 0 2px;
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .mini .t {
+    margin: 0 0 5px;
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .mini .p {
+    margin: 0;
+    font-size: .76rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .fx-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: end;
+    margin: 12px 0;
+  }
+  .fx-field label {
+    display: block;
+    font-size: .72rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  .fx-field input,
+  .fx-field select {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 14px;
+    background: rgba(120,120,128,.1);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .swap-btn {
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-bottom: 1px;
+    background: rgba(120,120,128,.14);
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .rate-edit { display: grid; gap: 8px; margin-top: 10px; }
+  .rate-edit input {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(120,120,128,.1);
+    font-weight: 600;
+  }
+  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .quick button {
+    border: none;
+    background: rgba(120,120,128,.12);
+    color: var(--label);
+    border-radius: 980px;
+    padding: 8px 12px;
+    font-size: .76rem;
+    font-weight: 600;
+  }
+  .fx-result {
+    margin-top: 12px;
+    padding: 18px 14px;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    background: rgba(0,122,255,.08);
+    color: var(--accent);
+    border: .5px solid rgba(0,122,255,.12);
+  }
+
+  .bottom-nav {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: calc(8px + var(--safe-b));
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    padding: 8px 4px 10px;
+    border-radius: 22px;
+    background: rgba(255,255,255,.72);
+    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(180%) blur(28px);
+    border: 1px solid rgba(255,255,255,.75);
+    box-shadow: 0 10px 40px rgba(0,0,0,.1), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .bottom-nav button {
+    border: none;
+    background: transparent;
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: .55rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .bottom-nav button .ic {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    transition: .2s ease;
+  }
+  .bottom-nav button svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .bottom-nav button.active { color: var(--accent); }
+  .bottom-nav button.active .ic {
+    background: var(--accent-soft);
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--nav-h) + var(--safe-b) + 18px);
+    transform: translateX(-50%) translateY(12px);
+    background: rgba(30,30,32,.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 980px;
+    font-size: .8rem;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (min-width: 720px) {
+    body { max-width: 430px; margin: 0 auto; }
+    .bottom-nav {
+      max-width: 410px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="brand">Seoul</div>
+    <div class="sub">10/2–6 · 弘济</div>
+  </div>
+  <div class="top-actions">
+    <button type="button" class="icon-btn" id="btn-reset-checks">清空勾选</button>
+  </div>
+</header>
+
+<!-- 概览 -->
+<section class="panel active" data-panel="home" id="panel-home">
+  <div class="hero">
+    <span class="eyebrow">Seoul</span>
+    <h1>两个人的首尔短途</h1>
+    <p>宫殿 · 韩屋 · 弘大 · 盘浦 · 圣水</p>
+    <div class="chips">
+      <span class="chip">情侣 · 2 人</span>
+      <span class="chip">弘济站</span>
+      <span class="chip">预算 ¥1万</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>行程总览</h2>
+    <div class="grid2">
+      <button type="button" class="mini" data-goto="d0"><p class="d">10/2–3</p><p class="t">出发夜</p><p class="p">龙岗→HKG→ICN过夜</p></button>
+      <button type="button" class="mini" data-goto="d1"><p class="d">10/3</p><p class="t">Day1</p><p class="p">宫殿→入住→落日飞车</p></button>
+      <button type="button" class="mini" data-goto="d2"><p class="d">10/4</p><p class="t">Day2</p><p class="p">弘大⅔→盘浦→夜公演</p></button>
+      <button type="button" class="mini" data-goto="d3"><p class="d">10/5</p><p class="t">Day3</p><p class="p">圣水→COEX→DDP→飞</p></button>
+    </div>
+    <p class="muted" style="margin:10px 0 0">点卡片可跳到当天 Tabs</p>
+  </div>
+
+  <div class="card">
+    <h2>酒店 · 弘济</h2>
+    <p class="muted">3号线弘济站 · 14:00入住 / 11:00退房 · 可寄行李<br>地址约 21 Tongil-ro 37na-gil</p>
+    <div class="link-row">
+      <a class="map-btn" href="https://maps.app.goo.gl/82e5MhLKKJ2CHYje9" target="_blank" rel="noopener">打开酒店地图</a>
+    </div>
+    <p class="muted" style="margin-top:10px"><b>进城：</b>Day1 坐 <b>6002</b> 下光化门 · 回酒店可坐 <b>6005</b></p>
+  </div>
+
+  <div class="card">
+    <h2>关键提醒</h2>
+    <div class="check-row" data-check="tip-visa"><input type="checkbox"><div><h3>团签 / 护照 PDF</h3><p class="muted">离线备份</p></div></div>
+    <div class="check-row" data-check="tip-esim"><input type="checkbox"><div><h3>韩国 eSIM</h3><p class="muted">出发前装好</p></div></div>
+    <div class="check-row" data-check="tip-tmoney"><input type="checkbox"><div><h3>T-money / 交通卡</h3><p class="muted">到韩后充值</p></div></div>
+    <div class="check-row" data-check="tip-plug"><input type="checkbox"><div><h3>欧标圆头插头</h3><p class="muted">Type C/F</p></div></div>
+  </div>
+</section>
+
+<!-- Day 0 -->
+<section class="panel" data-panel="d0" id="panel-d0">
+  <p class="day-label">Day 0 · 10/2–3</p>
+  <h2 class="day-title">上路 · 机场过夜</h2>
+  <p class="muted" style="margin-top:0">龙岗出发，红眼飞仁川，枕头在航站楼。</p>
+  <div class="card">
+    <div class="check-row slot-like" data-check="d0-1"><input type="checkbox"><div>
+      <div class="time">下午</div>
+      <h3>深圳龙岗万达出发</h3>
+      <p class="muted">地铁→过关→巴士赴 HKG · 提前约 3h 到 T2</p>
+      <span class="tag">陆路 ~3h15</span>
+    </div></div>
+    <div class="check-row" data-check="d0-2"><input type="checkbox"><div>
+      <div class="time">21:00</div>
+      <h3>UO614 · HKG T2 → ICN T1</h3>
+      <p class="muted">香港快运 · 无餐 · 核对手提尺寸</p>
+    </div></div>
+    <div class="check-row" data-check="d0-3"><input type="checkbox"><div>
+      <div class="time">凌晨</div>
+      <h3>仁川机场过夜</h3>
+      <p class="muted">找安静座位补觉到早上 · 可激活 eSIM</p>
+      <p class="note">✓ 不急着凌晨出机场</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- Day 1 -->
+<section class="panel" data-panel="d1" id="panel-d1">
+  <p class="day-label">Day 1 · 10/3 周六</p>
+  <h2 class="day-title">宫殿 · 入住 · 落日飞车</h2>
+  <p class="muted" style="margin-top:0">早进城白天逛 · 入住休息 · 晚光化门夜景巴士。</p>
+  <div class="card">
+    <div class="check-row" data-check="d1-1"><input type="checkbox"><div>
+      <div class="time">机场早上</div>
+      <h3>早餐在仁川</h3>
+      <p class="muted">吃饱再走 · 双背包背上逛一天</p>
+      <span class="tag food">早餐 · 机场</span>
+    </div></div>
+    <div class="check-row" data-check="d1-2"><input type="checkbox"><div>
+      <div class="time">早班 · ~1h</div>
+      <h3>6002 → 光化门</h3>
+      <p class="muted">T1 1层跟指示牌 · 示例 08:33→09:35 · 约 ₩17,000/人</p>
+      <a class="map-btn" href="https://maps.app.goo.gl/GQh7bXeNictehQAW7" target="_blank" rel="noopener">导航 ICN→光化门</a>
+    </div></div>
+    <div class="check-row" data-check="d1-buy"><input type="checkbox"><div>
+      <div class="time">到光化门就办</div>
+      <h3>买「落日飞车」票 ★</h3>
+      <p class="muted">城市观光巴士夜景线 · 光化门上车也在光化门结束 · 一班程 <b>19:00</b></p>
+      <p class="muted">售票处约在 <b>5 号线光化门站 6 号口</b> 前 · 也可提前网约（KKday / 官网）</p>
+      <span class="tag">须预约</span>
+      <p class="note">⚠ 天气不好可改不去 · 开票前看预报 · 出发前 30 分钟到柜台取实体票</p>
+    </div></div>
+    <div class="check-row" data-check="d1-3"><input type="checkbox"><div>
+      <div class="time">上午</div>
+      <h3>光化门广场 → 景福宫</h3>
+      <p class="muted">中轴主殿即可 · 韩服可免票（可选）</p>
+      <span class="tag">必去</span>
+    </div></div>
+    <div class="check-row" data-check="d1-4"><input type="checkbox"><div>
+      <div class="time">午间</div>
+      <h3>三清洞 → 北村韩屋村</h3>
+      <p class="muted">同片区步行 · 午餐自选</p>
+      <span class="tag food">午餐 · 三清洞/北村</span>
+    </div></div>
+    <div class="check-row" data-check="d1-5"><input type="checkbox"><div>
+      <div class="time">14:00 后</div>
+      <h3>北村 → 安国 → 弘济入住</h3>
+      <p class="muted">步行~10min → 3号线大化方向 4站 → 弘济再走~5min</p>
+      <a class="map-btn" href="https://maps.app.goo.gl/82e5MhLKKJ2CHYje9" target="_blank" rel="noopener">导航北村→酒店</a>
+    </div></div>
+    <div class="check-row" data-check="d1-6"><input type="checkbox"><div>
+      <div class="time">入住后</div>
+      <h3>洗漱 · 休息</h3>
+      <p class="muted">睡一小会儿 · 约 <b>18:00 前</b> 再出门回光化门</p>
+      <span class="tag food">简餐可酒店附近</span>
+    </div></div>
+    <div class="check-row" data-check="d1-7"><input type="checkbox"><div>
+      <div class="time">18:20–19:00</div>
+      <h3>回光化门 · 取票上车</h3>
+      <p class="muted">弘济 3 号线 → 安国/景福宫/钟路3街换线到光化门 · <b>18:30 前到售票处</b></p>
+      <span class="tag">天气好再坐</span>
+    </div></div>
+    <div class="check-row" data-check="d1-8"><input type="checkbox"><div>
+      <div class="time">19:00–~21:00</div>
+      <h3>落日飞车（夜景线）</h3>
+      <p class="muted">光化门发 · 同站收 · 约 1.5–2h · 汉江 / 南山塔（可下车拍 20–30min）等</p>
+      <span class="tag">Tour04 夜景</span>
+    </div></div>
+    <div class="check-row" data-check="d1-9"><input type="checkbox"><div>
+      <div class="time">下车后 ~30min</div>
+      <h3>清溪川夜逛</h3>
+      <p class="muted">终点附近清溪广场 / 清溪川走一圈 · 约半小时</p>
+      <span class="tag">轻松收尾</span>
+    </div></div>
+    <div class="check-row" data-check="d1-10"><input type="checkbox"><div>
+      <div class="time">约 21:30+</div>
+      <h3>回弘济酒店</h3>
+      <p class="muted">光化门 5 号线 → 钟路 3 街换 3 号线 → 弘济</p>
+    </div></div>
+    <div class="food-box"><b>美食位：</b>午餐 ______ · 入住简餐 ______ · 清溪川附近 ______</div>
+  </div>
+</section>
+
+<!-- Day 2 -->
+<section class="panel" data-panel="d2" id="panel-d2">
+  <p class="day-label">Day 2 · 10/4 周日</p>
+  <h2 class="day-title">弘大 · 盘浦 · 夜公演</h2>
+  <p class="muted" style="margin-top:0">白天逛约 ⅔ · 傍晚盘浦 · 夜归顺路弘大街演。</p>
+  <div class="card">
+    <div class="check-row" data-check="d2-0"><input type="checkbox"><div>
+      <div class="time">酒店出发</div>
+      <h3>弘济 → 弘大入口</h3>
+      <p class="muted">3 号线 → 乙支路 3 街换 2 号线 → 弘大入口</p>
+    </div></div>
+    <div class="check-row" data-check="d2-1"><input type="checkbox"><div>
+      <div class="time">白天 –16:30</div>
+      <h3>弘大白天 · 约三分之二</h3>
+      <p class="muted"><b>①</b> 延南/北边 · 下午茶美食　·　<b>②</b> 吃饭休闲　·　顺带专辑店</p>
+      <p class="muted">③ 逛街看公演、④ club 留给晚上（club 可跳过）</p>
+      <span class="tag">专辑 1–2 张</span>
+      <span class="tag food">午餐 / 下午茶</span>
+      <p class="note">WITHMUU 4 口 · Beluga 9 口 · 白天先 ①②，③ 晚再补</p>
+    </div></div>
+    <div class="check-row" data-check="d2-2"><input type="checkbox"><div>
+      <div class="time">16:30 动身</div>
+      <h3>前往盘浦汉江公园</h3>
+      <p class="muted">地铁 9 号线 <b>新盘浦站</b> · 或公交 <b>盘浦大桥南端</b></p>
+      <span class="tag">Banpo Hangang Park</span>
+      <p class="note">✓ 弘大 2 号线 → 堂山换 9 号线 → 新盘浦</p>
+    </div></div>
+    <div class="check-row" data-check="d2-3"><input type="checkbox"><div>
+      <div class="time">18:00</div>
+      <h3>左边 · 散步看日落</h3>
+      <p class="muted">西侧 <b>西来岛（서래섬）</b> · 约 18:10 日落</p>
+      <span class="tag">左 · 日落</span>
+      <span class="tag food">便利店野餐</span>
+    </div></div>
+    <div class="check-row" data-check="d2-4"><input type="checkbox"><div>
+      <div class="time">19:00 → 19:30</div>
+      <h3>右边 · 月光彩虹喷泉</h3>
+      <p class="muted">东侧盘浦大桥 · 19:00 占位 · <b>19:30</b> 首场（约 20 分钟）</p>
+      <span class="tag">右 · 喷泉</span>
+      <p class="note">淡季周日：19:30 / 20:00 / 20:30 / 21:00</p>
+    </div></div>
+    <div class="check-row" data-check="d2-5"><input type="checkbox"><div>
+      <div class="time">喷泉后 · 顺路</div>
+      <h3>回程经弘大 · 夜街演</h3>
+      <p class="muted">新盘浦 → 堂山换 2 号 → <b>弘大入口</b> · ③ 逛街看公演区 · 街边 busking</p>
+      <span class="tag">③ 夜公演</span>
+      <span class="tag food">晚餐 · 弘大</span>
+      <p class="note">看够后再 2→3 号线回弘济酒店</p>
+    </div></div>
+    <div class="food-box"><b>美食位：</b>①下午茶 ______ · ②午餐 ______ · 盘浦 ______ · 夜弘大 ______</div>
+  </div>
+</section>
+
+<!-- Day 3 -->
+<section class="panel" data-panel="d3" id="panel-d3">
+  <p class="day-label">Day 3 · 10/5 周一</p>
+  <h2 class="day-title">圣水 · COEX · DDP</h2>
+  <p class="muted" style="margin-top:0">退房东线收束，傍晚赴仁川。</p>
+  <div class="card">
+    <div class="check-row" data-check="d3-1"><input type="checkbox"><div>
+      <div class="time">11:00 前</div>
+      <h3>退房 · 轻装出发</h3>
+      <p class="muted">可问前台暂存 · 核护照/团签/机票</p>
+    </div></div>
+    <div class="check-row" data-check="d3-2"><input type="checkbox"><div>
+      <div class="time">10:30–12:30</div>
+      <h3>圣水洞</h3>
+      <p class="muted">工业风咖啡 · 慢慢走</p>
+      <span class="tag food">早午餐 · 圣水</span>
+    </div></div>
+    <div class="check-row" data-check="d3-3"><input type="checkbox"><div>
+      <div class="time">13:00–14:30</div>
+      <h3>COEX · 星空图书馆</h3>
+      <p class="muted">拍照 30–50 分钟够 · 别耗赴机缓冲</p>
+    </div></div>
+    <div class="check-row" data-check="d3-4"><input type="checkbox"><div>
+      <div class="time">15:00–17:00</div>
+      <h3>东大门 DDP</h3>
+      <p class="muted">建筑本身就是景 · 不必钻批发楼</p>
+    </div></div>
+    <div class="check-row" data-check="d3-5"><input type="checkbox"><div>
+      <div class="time">17:00–18:00</div>
+      <h3>动身赴仁川</h3>
+      <p class="muted">22:30 起飞 · 建议此前后离开 · AREX 更稳</p>
+      <p class="note">✓ 宁早勿赶 · 快运值机别踩点</p>
+    </div></div>
+    <div class="check-row" data-check="d3-6"><input type="checkbox"><div>
+      <div class="time">22:30→</div>
+      <h3>UO615 · ICN → HKG T1</h3>
+      <p class="muted">落地后香港机场过夜</p>
+    </div></div>
+    <div class="food-box"><b>美食位：</b>圣水 ______ · 路上 ______ · 赴机前 ______</div>
+  </div>
+</section>
+
+<!-- Day 4 -->
+<section class="panel" data-panel="d4" id="panel-d4">
+  <p class="day-label">Day 4 · 10/6</p>
+  <h2 class="day-title">HKG 过夜 · 回家</h2>
+  <p class="muted" style="margin-top:0">先睡够，再过关回龙岗。</p>
+  <div class="card">
+    <div class="check-row" data-check="d4-1"><input type="checkbox"><div>
+      <div class="time">上午</div>
+      <h3>HKG T1 → 龙岗万达</h3>
+      <p class="muted">注意是 <b>T1</b>（去程从 T2）· 按白天班次巴士/地铁</p>
+      <span class="tag food">早餐 · 机场或过关后</span>
+    </div></div>
+  </div>
+</section>
+
+<!-- 汇率 -->
+<section class="panel" data-panel="fx" id="panel-fx">
+  <p class="day-label">工具</p>
+  <h2 class="day-title">汇率换算</h2>
+  <p class="muted" style="margin-top:0">离线可用 · 汇率可手改（会记住）</p>
+
+  <div class="card">
+    <div class="fx-row">
+      <div class="fx-field">
+        <label>金额</label>
+        <input id="fx-amount" type="number" inputmode="decimal" value="100" />
+      </div>
+      <button type="button" class="swap-btn" id="fx-swap" title="对调">⇄</button>
+      <div class="fx-field">
+        <label>方向</label>
+        <select id="fx-dir">
+          <option value="cny-krw">人民币 → 韩元</option>
+          <option value="krw-cny">韩元 → 人民币</option>
+          <option value="hkd-krw">港币 → 韩元</option>
+          <option value="krw-hkd">韩元 → 港币</option>
+          <option value="cny-hkd">人民币 → 港币</option>
+          <option value="hkd-cny">港币 → 人民币</option>
+        </select>
+      </div>
+    </div>
+    <div class="quick">
+      <button type="button" data-amt="17">巴士 ₩1.7万</button>
+      <button type="button" data-amt="10000">₩1万</button>
+      <button type="button" data-amt="50000">₩5万</button>
+      <button type="button" data-amt="100">¥100</button>
+      <button type="button" data-amt="500">¥500</button>
+    </div>
+    <div class="fx-result" id="fx-out">—</div>
+  </div>
+
+  <div class="card">
+    <h2>参考汇率（可改）</h2>
+    <p class="muted">默认约 2026-08 市场中值，出行前按银行/兑换点再改。</p>
+    <div class="rate-edit">
+      <label class="muted">1 人民币 = <input id="rate-cny-krw" type="number" inputmode="decimal" step="0.01" /> 韩元</label>
+      <label class="muted">1 港币 = <input id="rate-hkd-krw" type="number" inputmode="decimal" step="0.01" /> 韩元</label>
+      <label class="muted">1 人民币 = <input id="rate-cny-hkd" type="number" inputmode="decimal" step="0.0001" /> 港币</label>
+    </div>
+    <button type="button" class="icon-btn" id="fx-save" style="margin-top:10px">保存汇率</button>
+    <button type="button" class="icon-btn" id="fx-reset" style="margin-top:10px">恢复默认</button>
+  </div>
+
+  <div class="card">
+    <h2>穷游速查</h2>
+    <p class="muted" id="fx-cheat">—</p>
+  </div>
+</section>
+
+<nav class="bottom-nav" aria-label="主导航">
+  <button type="button" class="active" data-nav="home">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>
+    </span>
+    总览
+  </button>
+  <button type="button" data-nav="d0">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/><path d="M16.5 7.5c2.2 1.2 3.5 2.6 3.5 4.5s-1.3 3.3-3.5 4.5"/><path d="M3 17.5h3.5A3.5 3.5 0 0 0 10 14"/></svg>
+    </span>
+    出发
+  </button>
+  <button type="button" data-nav="d1">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M6 20V9l6-4 6 4v11"/><path d="M10 20v-5h4v5"/><path d="M9 12h.01M15 12h.01M12 12h.01"/></svg>
+    </span>
+    第一天
+  </button>
+  <button type="button" data-nav="d2">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="8.5" cy="16.5" r="2.5"/><circle cx="17" cy="15" r="2"/><path d="M11 16.5V7.2l8-1.7V15"/><path d="M11 10.5 19 8.8"/></svg>
+    </span>
+    第二天
+  </button>
+  <button type="button" data-nav="d3">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 20V9l4-3 4 3 4-3 4 3v11"/><path d="M4 20h16"/><path d="M8 20v-5h3v5M13 20v-5h3v5"/></svg>
+    </span>
+    第三天
+  </button>
+  <button type="button" data-nav="d4">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M14 12H4"/><path d="m8 8-4 4 4 4"/><path d="M14 7.5c2.8 0 5 2 5 4.5s-2.2 4.5-5 4.5"/><path d="M20 7v10"/></svg>
+    </span>
+    返程
+  </button>
+  <button type="button" data-nav="fx">
+    <span class="ic" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9"/><path d="M9.6 9.2c.6-.7 1.5-1 2.4-1 1.5 0 2.5.8 2.5 2s-1 1.8-2.5 2.1c-1.6.3-2.6.9-2.6 2.2s1.1 2 2.6 2c1 0 1.9-.4 2.5-1.1"/></svg>
+    </span>
+    换汇
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  const DEFAULTS = {
+    cnyKrw: 205.2,
+    hkdKrw: 186.5,
+    cnyHkd: 1.1
+  };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+  }
+
+  function showPanel(id) {
+    $$(".panel").forEach(p => p.classList.toggle("active", p.dataset.panel === id));
+    $$(".bottom-nav button").forEach(b => b.classList.toggle("active", b.dataset.nav === id));
+    location.hash = id;
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  }
+
+  $$(".bottom-nav button").forEach(btn => {
+    btn.addEventListener("click", () => showPanel(btn.dataset.nav));
+  });
+  $$("[data-goto]").forEach(btn => {
+    btn.addEventListener("click", () => showPanel(btn.dataset.goto));
+  });
+
+  // restore hash
+  const hash = (location.hash || "#home").slice(1);
+  if ($(`[data-panel="${hash}"]`)) showPanel(hash);
+
+  // checkboxes
+  const CHECK_KEY = "seoul-guide-checks-v1";
+  function loadChecks() {
+    try { return JSON.parse(localStorage.getItem(CHECK_KEY) || "{}"); } catch { return {}; }
+  }
+  function saveChecks(map) {
+    localStorage.setItem(CHECK_KEY, JSON.stringify(map));
+  }
+  function applyChecks() {
+    const map = loadChecks();
+    $$("[data-check]").forEach(row => {
+      const id = row.dataset.check;
+      const box = row.querySelector('input[type="checkbox"]');
+      box.checked = !!map[id];
+      row.classList.toggle("done", box.checked);
+      box.onchange = () => {
+        map[id] = box.checked;
+        saveChecks(map);
+        row.classList.toggle("done", box.checked);
+      };
+    });
+  }
+  applyChecks();
+  $("#btn-reset-checks").onclick = () => {
+    localStorage.removeItem(CHECK_KEY);
+    applyChecks();
+    toast("勾选已清空");
+  };
+
+  // FX
+  const RATE_KEY = "seoul-guide-rates-v1";
+  function loadRates() {
+    try {
+      return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(RATE_KEY) || "{}"));
+    } catch { return { ...DEFAULTS }; }
+  }
+  function fillRateInputs() {
+    const r = loadRates();
+    $("#rate-cny-krw").value = r.cnyKrw;
+    $("#rate-hkd-krw").value = r.hkdKrw;
+    $("#rate-cny-hkd").value = r.cnyHkd;
+  }
+  function convert() {
+    const r = loadRates();
+    const amt = Number($("#fx-amount").value) || 0;
+    const dir = $("#fx-dir").value;
+    let out = 0, label = "";
+    switch (dir) {
+      case "cny-krw": out = amt * r.cnyKrw; label = `₩ ${fmt(out)}`; break;
+      case "krw-cny": out = amt / r.cnyKrw; label = `¥ ${fmt(out)}`; break;
+      case "hkd-krw": out = amt * r.hkdKrw; label = `₩ ${fmt(out)}`; break;
+      case "krw-hkd": out = amt / r.hkdKrw; label = `HK$ ${fmt(out)}`; break;
+      case "cny-hkd": out = amt * r.cnyHkd; label = `HK$ ${fmt(out)}`; break;
+      case "hkd-cny": out = amt / r.cnyHkd; label = `¥ ${fmt(out)}`; break;
+    }
+    $("#fx-out").textContent = label;
+    $("#fx-cheat").innerHTML =
+      `¥100 ≈ ₩${fmt(100 * r.cnyKrw)}　·　₩10,000 ≈ ¥${fmt(10000 / r.cnyKrw)}<br>` +
+      `机场巴士 ₩17,000 ≈ ¥${fmt(17000 / r.cnyKrw)} / 人<br>` +
+      `HK$100 ≈ ₩${fmt(100 * r.hkdKrw)}`;
+  }
+  function fmt(n) {
+    return Math.round(n * 100) / 100;
+  }
+  fillRateInputs();
+  convert();
+  $("#fx-amount").addEventListener("input", convert);
+  $("#fx-dir").addEventListener("change", convert);
+  $("#fx-swap").onclick = () => {
+    const sel = $("#fx-dir");
+    const map = {
+      "cny-krw": "krw-cny", "krw-cny": "cny-krw",
+      "hkd-krw": "krw-hkd", "krw-hkd": "hkd-krw",
+      "cny-hkd": "hkd-cny", "hkd-cny": "cny-hkd"
+    };
+    sel.value = map[sel.value];
+    convert();
+  };
+  $$(".quick button").forEach(b => {
+    b.onclick = () => {
+      const v = Number(b.dataset.amt);
+      $("#fx-amount").value = v;
+      const t = b.textContent;
+      if (t.includes("₩") || t.includes("巴士")) $("#fx-dir").value = "krw-cny";
+      else if (t.includes("¥")) $("#fx-dir").value = "cny-krw";
+      convert();
+    };
+  });
+  $("#fx-save").onclick = () => {
+    const next = {
+      cnyKrw: Number($("#rate-cny-krw").value) || DEFAULTS.cnyKrw,
+      hkdKrw: Number($("#rate-hkd-krw").value) || DEFAULTS.hkdKrw,
+      cnyHkd: Number($("#rate-cny-hkd").value) || DEFAULTS.cnyHkd
+    };
+    localStorage.setItem(RATE_KEY, JSON.stringify(next));
+    convert();
+    toast("汇率已保存");
+  };
+  $("#fx-reset").onclick = () => {
+    localStorage.removeItem(RATE_KEY);
+    fillRateInputs();
+    convert();
+    toast("已恢复默认汇率");
+  };
+})();
+</script>
+</body>
+</html>
