@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="theme-color" content="#f2f2f7" />
 <title>首尔短途</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
     --ink: #1c1c1e;
@@ -227,6 +228,130 @@
     font-size: .83rem;
     font-weight: 500;
   }
+  .spot-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .food-chip {
+    flex-shrink: 0;
+    border: none;
+    background: rgba(255,159,10,.16);
+    color: #b25e00;
+    border-radius: 980px;
+    padding: 4px 10px;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .food-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: none;
+    background: #f2f2f7;
+  }
+  .food-sheet.open { display: flex; flex-direction: column; }
+  .food-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(10px + var(--safe-t)) 8px 10px;
+    background: rgba(242,242,247,.86);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: .5px solid rgba(60,60,67,.12);
+  }
+  .food-back {
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    font-size: .95rem;
+    font-weight: 600;
+    padding: 8px 10px;
+    min-height: 44px;
+  }
+  .food-bar h2 {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 1.02rem;
+    letter-spacing: -.02em;
+    padding-right: 52px;
+  }
+  #food-list {
+    flex: 1;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 12px calc(20px + var(--safe-b));
+  }
+  .shop {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 14px 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.05);
+  }
+  .shop-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .shop-name { font-size: 1.05rem; font-weight: 700; letter-spacing: -.02em; }
+  .shop-meta { margin-top: 2px; font-size: .78rem; color: var(--muted); }
+  .shop-side {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .shop-toggle {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(120,120,128,.12);
+    color: var(--label);
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .shop-toggle svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .2s ease;
+  }
+  .shop.open .shop-toggle svg { transform: rotate(180deg); }
+  .shop-body { display: none; }
+  .shop.open .shop-body { display: block; }
+  .shop-note { margin: 8px 0 0; font-size: .84rem; color: var(--label); }
+  .shop-map {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 8px;
+    padding: 8px 0;
+    font-size: .84rem;
+    font-weight: 600;
+    border-top: .5px solid rgba(60,60,67,.1);
+  }
+  .shop-photos { display: grid; gap: 8px; margin-top: 4px; }
+  .shop-photos img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    background: #e8eef5;
+  }
+  .food-empty { font-size: .84rem; color: var(--muted); margin: 8px 4px; }
 
   .check-row {
     display: flex;
@@ -433,6 +558,68 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  .map-card {
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-bottom: 12px;
+    background: var(--fill-solid);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .map-card .map-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .map-card .map-head h2 {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .map-card .map-head span {
+    font-size: .68rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .route-map {
+    height: 280px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: .5px solid rgba(60,60,67,.1);
+    z-index: 1;
+    background: #e8eef5;
+  }
+  .route-map .leaflet-control-attribution {
+    font-size: 9px;
+    background: rgba(255,255,255,.75);
+  }
+  .pin {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 8px rgba(0,122,255,.35);
+    border: 2px solid #fff;
+  }
+  .pin.hotel { background: #34c759; }
+  .pin.night { background: #5856d6; }
+  .map-legend {
+    margin: 8px 0 0;
+    font-size: .72rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
   @media (min-width: 720px) {
     body { max-width: 430px; margin: 0 auto; }
     .bottom-nav {
@@ -504,6 +691,13 @@
   <h2 class="day-title">上路 · 机场过夜</h2>
   <p class="muted" style="margin-top:0">龙岗出发，红眼飞仁川，枕头在航站楼。</p>
   <div class="card">
+    <div class="check-row" data-check="d0-eac"><input type="checkbox"><div>
+      <div class="time">入境前 3 天内</div>
+      <h3>韩国入境申报</h3>
+      <p class="muted">电子入境卡 e-Arrival Card · 两人各填 · 免费 · 10/3 抵韩，约 <b>10/1 起</b>可提交</p>
+      <p class="note">提交后 72 小时内入境有效 · 保存邮件里的编号截图</p>
+      <a class="map-btn" href="https://www.e-arrivalcard.go.kr/portal/main/index.do?locale=CH" target="_blank" rel="noopener">打开官网申报</a>
+    </div></div>
     <div class="check-row slot-like" data-check="d0-1"><input type="checkbox"><div>
       <div class="time">下午</div>
       <h3>深圳龙岗万达出发</h3>
@@ -529,6 +723,16 @@
   <p class="day-label">Day 1 · 10/3 周六</p>
   <h2 class="day-title">宫殿 · 入住 · 落日飞车</h2>
   <p class="muted" style="margin-top:0">早进城白天逛 · 入住休息 · 晚光化门夜景巴士。</p>
+
+  <div class="map-card">
+    <div class="map-head">
+      <h2>Day1 示意路线</h2>
+      <span>静态折线 · 可缩放</span>
+    </div>
+    <div id="map-d1" class="route-map" role="img" aria-label="第一天行程示意地图"></div>
+    <p class="map-legend">蓝线沿道路示意（非地铁轨）。不含机场进城。绿=酒店 · 紫=夜间。</p>
+  </div>
+
   <div class="card">
     <div class="check-row" data-check="d1-1"><input type="checkbox"><div>
       <div class="time">机场早上</div>
@@ -613,7 +817,10 @@
       <p class="muted">3 号线 → 乙支路 3 街换 2 号线 → 弘大入口</p>
     </div></div>
     <div class="check-row" data-check="d2-1"><input type="checkbox"><div>
-      <div class="time">白天 –16:30</div>
+      <div class="spot-top">
+        <div class="time">白天 –16:30</div>
+        <button type="button" class="food-chip" data-food-area="d2-hongdae">美食</button>
+      </div>
       <h3>弘大白天 · 约三分之二</h3>
       <p class="muted"><b>①</b> 延南/北边 · 下午茶美食　·　<b>②</b> 吃饭休闲　·　顺带专辑店</p>
       <p class="muted">③ 逛街看公演、④ club 留给晚上（club 可跳过）</p>
@@ -809,8 +1016,17 @@
   </button>
 </nav>
 
+<div class="food-sheet" id="food-sheet">
+  <div class="food-bar">
+    <button type="button" class="food-back" data-food-close>返回</button>
+    <h2 id="food-title">美食</h2>
+  </div>
+  <div id="food-list"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 (function () {
   const DEFAULTS = {
@@ -830,11 +1046,81 @@
     toast._t = setTimeout(() => el.classList.remove("show"), 1600);
   }
 
+  /* —— Day1 静态示意路线（Leaflet + 沿路折线） —— */
+    const DAY1_PATH = [[37.575357,126.976384],[37.575444,126.976225],[37.575583,126.975983],[37.575664,126.975802],[37.575725,126.975603],[37.575767,126.975337],[37.575807,126.974275],[37.575985,126.974249],[37.576441,126.974196],[37.576773,126.974132],[37.577008,126.974097],[37.577504,126.974023],[37.578269,126.973924],[37.578748,126.973877],[37.578766,126.974122],[37.578721,126.974353],[37.578724,126.97483],[37.578714,126.975123],[37.578726,126.975845],[37.578692,126.976112],[37.578885,126.976303],[37.578992,126.976481],[37.578982,126.976788],[37.578975,126.977005],[37.579156,126.97719],[37.578975,126.977005],[37.578982,126.976788],[37.578991,126.976485],[37.578922,126.976308],[37.578711,126.976126],[37.578726,126.975845],[37.578714,126.975123],[37.578724,126.97483],[37.578721,126.974353],[37.578766,126.974122],[37.578751,126.973915],[37.578926,126.973848],[37.579317,126.973819],[37.579764,126.973778],[37.580575,126.973706],[37.581808,126.973681],[37.582992,126.973671],[37.583209,126.973727],[37.583369,126.973796],[37.583496,126.973885],[37.583762,126.975417],[37.583773,126.97566],[37.583789,126.976303],[37.583786,126.976514],[37.583751,126.976991],[37.583705,126.977359],[37.583588,126.9783],[37.58352,126.978781],[37.5835,126.979],[37.58347,126.979283],[37.583442,126.979464],[37.583265,126.979573],[37.583118,126.979727],[37.582885,126.979943],[37.582754,126.980033],[37.582572,126.980111],[37.582375,126.980166],[37.581981,126.980174],[37.581797,126.980626],[37.58168,126.980777],[37.581558,126.980898],[37.581415,126.981022],[37.581383,126.981281],[37.581227,126.981504],[37.581022,126.981593],[37.581044,126.981838],[37.581075,126.982172],[37.581425,126.982237],[37.581665,126.982168],[37.58187,126.982158],[37.58208,126.982162],[37.582567,126.982207],[37.582778,126.982215],[37.583033,126.982237],[37.583523,126.982263],[37.583729,126.98228],[37.583865,126.982351],[37.583972,126.982479],[37.58404,126.982616],[37.584253,126.982757],[37.584579,126.98298],[37.584676,126.983399],[37.584427,126.98346],[37.58441,126.98368],[37.584326,126.983847],[37.584046,126.984098],[37.584222,126.984439],[37.584144,126.984628],[37.584048,126.985163],[37.583683,126.985153],[37.583338,126.985142],[37.582806,126.98513],[37.582547,126.985124],[37.5818,126.985086],[37.581459,126.985075],[37.58126,126.985071],[37.580968,126.98506],[37.580607,126.985057],[37.580164,126.985038],[37.579616,126.98502],[37.579382,126.985016],[37.5792,126.98509],[37.579063,126.985172],[37.578795,126.985277],[37.578447,126.985419],[37.578219,126.985506],[37.577883,126.985664],[37.577516,126.985837],[37.57703,126.986084],[37.576837,126.986196],[37.576682,126.985893],[37.576516,126.985489],[37.576178,126.984825],[37.576022,126.984431],[37.575888,126.984049],[37.575822,126.983877],[37.575772,126.983626],[37.575657,126.983175],[37.575632,126.982957],[37.575648,126.982605],[37.575802,126.9817],[37.575836,126.981449],[37.575926,126.980781],[37.575959,126.980189],[37.575956,126.979961],[37.575928,126.979713],[37.575856,126.979213],[37.575823,126.978878],[37.575721,126.978172],[37.575657,126.977892],[37.575536,126.977652],[37.575412,126.97744],[37.575305,126.977237],[37.575257,126.977062],[37.575254,126.976781],[37.575292,126.97655],[37.575381,126.976335],[37.575514,126.976112],[37.575629,126.975891],[37.5757,126.975693],[37.575753,126.975469],[37.575807,126.974275],[37.575828,126.97395],[37.57586,126.973479],[37.5759,126.973149],[37.57594,126.972901],[37.576004,126.972611],[37.576025,126.972412],[37.576086,126.971926],[37.57611,126.971492],[37.576128,126.97092],[37.576134,126.970364],[37.576138,126.970018],[37.576136,126.969763],[37.576055,126.969431],[37.575963,126.969287],[37.575874,126.969146],[37.575728,126.968917],[37.574816,126.967687],[37.574697,126.967547],[37.574574,126.96737],[37.574447,126.967103],[37.574276,126.966526],[37.574145,126.966058],[37.574036,126.965715],[37.573946,126.965516],[37.573771,126.965243],[37.573569,126.965004],[37.572592,126.963924],[37.572508,126.963632],[37.572494,126.963169],[37.572535,126.962457],[37.572551,126.96182],[37.572577,126.961176],[37.572596,126.960848],[37.5726,126.960484],[37.572609,126.960271],[37.572627,126.960082],[37.572829,126.959744],[37.573014,126.959569],[37.574405,126.958112],[37.575016,126.957325],[37.57522,126.957136],[37.5756,126.956741],[37.575828,126.956473],[37.575982,126.956313],[37.576323,126.955975],[37.576685,126.955714],[37.577492,126.955104],[37.57763,126.95498],[37.578352,126.954336],[37.578874,126.953778],[37.579392,126.953278],[37.580143,126.952492],[37.580493,126.952082],[37.581196,126.951148],[37.581317,126.951017],[37.581644,126.950816],[37.582021,126.950639],[37.582282,126.950466],[37.582741,126.950243],[37.583088,126.950076],[37.583227,126.949999],[37.583509,126.949812],[37.583909,126.94951],[37.584276,126.94914],[37.584588,126.948821],[37.584657,126.948686],[37.585062,126.948298],[37.585331,126.948055],[37.585558,126.947833],[37.586282,126.947059],[37.586521,126.946826],[37.586991,126.946373],[37.58728,126.946065],[37.587536,126.945821],[37.587693,126.945646],[37.588191,126.945052],[37.588435,126.944711],[37.589001,126.944047],[37.589648,126.943236],[37.589998,126.942798],[37.59014,126.942651],[37.590602,126.942221],[37.590905,126.941991],[37.591366,126.941692],[37.591571,126.941539],[37.591486,126.941338],[37.591314,126.941474],[37.591038,126.941675],[37.59021,126.942392],[37.589719,126.942895],[37.589599,126.943037],[37.589291,126.943467],[37.588907,126.943899],[37.588673,126.944181],[37.588415,126.9445],[37.588196,126.94479],[37.587817,126.945296],[37.58747,126.94567],[37.587346,126.945798],[37.58692,126.94624],[37.586754,126.946409],[37.58658,126.946588],[37.58646,126.94671],[37.58622,126.94696],[37.586083,126.947103],[37.58578,126.9474],[37.585255,126.947904],[37.584974,126.948187],[37.584596,126.948597],[37.584462,126.948748],[37.584097,126.949098],[37.583893,126.949292],[37.583767,126.949413],[37.583438,126.949659],[37.583122,126.949882],[37.582707,126.950128],[37.58188,126.95053],[37.581616,126.950688],[37.581471,126.950778],[37.581289,126.950915],[37.581098,126.951062],[37.58069,126.951564],[37.580414,126.951915],[37.5802,126.952158],[37.579961,126.95244],[37.579616,126.952787],[37.57949,126.95291],[37.57832,126.954109],[37.577497,126.954821],[37.577206,126.955076],[37.576619,126.955589],[37.575882,126.95616],[37.575737,126.956316],[37.575502,126.956583],[37.57536,126.956738],[37.575059,126.95712],[37.574341,126.957997],[37.573674,126.958748],[37.572401,126.959967],[37.572277,126.96008],[37.572088,126.96025],[37.572176,126.960388],[37.572238,126.960526],[37.572315,126.960774],[37.57235,126.960949],[37.572368,126.961227],[37.57237,126.961664],[37.572351,126.962487],[37.572334,126.963437],[37.572339,126.963767],[37.572371,126.964023],[37.572471,126.964252],[37.573486,126.96534],[37.573692,126.965543],[37.57381,126.965691],[37.573942,126.965905],[37.574032,126.96612],[37.57422,126.966716],[37.574306,126.967011],[37.57449,126.967394],[37.574571,126.967529],[37.575503,126.968801],[37.575807,126.96927],[37.575926,126.969547],[37.57596,126.969756],[37.575977,126.970046],[37.575969,126.970351],[37.575975,126.970677],[37.575964,126.971142],[37.575953,126.971424],[37.575935,126.971764],[37.575895,126.972227],[37.575816,126.972633],[37.575749,126.973331],[37.575712,126.973714],[37.575673,126.974292],[37.57566,126.974675],[37.575663,126.975311],[37.575652,126.975516],[37.575618,126.975699],[37.575547,126.975902],[37.575433,126.976096],[37.575301,126.976298],[37.575218,126.976462],[37.575172,126.97662],[37.575138,126.976855],[37.575161,126.977068],[37.575281,126.977172],[37.575245,126.976918],[37.575267,126.976665],[37.57533,126.976441],[37.575444,126.976225],[37.575583,126.975983],[37.575664,126.975802],[37.575725,126.975603],[37.575767,126.975337],[37.575807,126.974275],[37.575828,126.97395],[37.57586,126.973479],[37.5759,126.973149],[37.57594,126.972901],[37.576004,126.972611],[37.576025,126.972412],[37.576086,126.971926],[37.57611,126.971492],[37.576128,126.97092],[37.576134,126.970364],[37.576138,126.970018],[37.576136,126.969763],[37.576055,126.969431],[37.575963,126.969287],[37.575874,126.969146],[37.575728,126.968917],[37.574887,126.970209],[37.574766,126.97042],[37.574566,126.970863],[37.574418,126.971255],[37.574285,126.971863],[37.574205,126.972169],[37.574041,126.972692],[37.573101,126.972654],[37.572686,126.972637],[37.572134,126.972615],[37.57181,126.972602],[37.571606,126.972594],[37.570189,126.972549],[37.570077,126.974455],[37.57009,126.974857],[37.5701,126.975179],[37.570111,126.975511],[37.570133,126.97684],[37.570137,126.977065],[37.57014,126.977303],[37.570145,126.977555],[37.570141,126.978433],[37.569332,126.978411],[37.569363,126.977882],[37.569382,126.977593],[37.569333,126.977415],[37.569131,126.977434],[37.569092,126.977597],[37.569072,126.977886],[37.569044,126.978294],[37.568985,126.979141],[37.569252,126.979303],[37.569734,126.979318],[37.570058,126.979337],[37.570263,126.979338],[37.570267,126.978974],[37.570272,126.978591],[37.570277,126.977602],[37.57028,126.977358],[37.57028,126.977076],[37.570279,126.976839],[37.570278,126.976563],[37.570274,126.975599],[37.570225,126.974994],[37.570203,126.974715],[37.570197,126.973862],[37.570194,126.973268],[37.570189,126.972549],[37.570186,126.971956],[37.570063,126.971646],[37.569985,126.971447],[37.569819,126.971157],[37.569481,126.970662],[37.56931,126.970408],[37.569099,126.970149],[37.568961,126.970025],[37.568368,126.969107],[37.568101,126.968832],[37.567571,126.968325],[37.567105,126.967859],[37.566821,126.96754],[37.566557,126.967264],[37.566322,126.967018],[37.566266,126.966767],[37.566248,126.96654],[37.56629,126.966346],[37.567184,126.965466],[37.567346,126.965302],[37.568445,126.964246],[37.568649,126.964095],[37.569253,126.963556],[37.569857,126.962943],[37.570445,126.962237],[37.570947,126.961745],[37.571053,126.96163],[37.571857,126.96071],[37.572176,126.960388],[37.572351,126.960226],[37.572624,126.959974],[37.572829,126.959744],[37.573014,126.959569],[37.574405,126.958112],[37.575016,126.957325],[37.57522,126.957136],[37.5756,126.956741],[37.575828,126.956473],[37.575982,126.956313],[37.576323,126.955975],[37.576685,126.955714],[37.577492,126.955104],[37.57763,126.95498],[37.578352,126.954336],[37.578874,126.953778],[37.579392,126.953278],[37.580143,126.952492],[37.580493,126.952082],[37.581196,126.951148],[37.581317,126.951017],[37.581644,126.950816],[37.582021,126.950639],[37.582282,126.950466],[37.582741,126.950243],[37.583088,126.950076],[37.583227,126.949999],[37.583509,126.949812],[37.583909,126.94951],[37.584276,126.94914],[37.584588,126.948821],[37.584657,126.948686],[37.585062,126.948298],[37.585331,126.948055],[37.585558,126.947833],[37.586282,126.947059],[37.586521,126.946826],[37.586991,126.946373],[37.58728,126.946065],[37.587536,126.945821],[37.587693,126.945646],[37.588191,126.945052],[37.588435,126.944711],[37.588575,126.944728]]
+;
+  const DAY1_ROUTE = [
+    { name: "光化门", time: "上午 · 买票", lat: 37.5759, lng: 126.9768 },
+    { name: "景福宫", time: "上午", lat: 37.5796, lng: 126.9770 },
+    { name: "三清洞", time: "午间", lat: 37.5847, lng: 126.9834 },
+    { name: "北村韩屋", time: "午间", lat: 37.5815, lng: 126.9850 },
+    { name: "弘济酒店", time: "14:00+ 入住", lat: 37.5885, lng: 126.9448, kind: "hotel" },
+    { name: "光化门上车", time: "19:00 落日飞车", lat: 37.5759, lng: 126.9768, kind: "night" },
+    { name: "清溪川", time: "下车后 ~30min", lat: 37.5691, lng: 126.9783, kind: "night" },
+    { name: "回弘济", time: "约 21:30+", lat: 37.5885, lng: 126.9448, kind: "hotel" }
+  ];
+
+  let mapD1 = null;
+  let mapD1Ready = false;
+
+  function drawDay1Route(pathLatLngs) {
+    const el = $("#map-d1");
+    if (!el || mapD1 || typeof L === "undefined") return;
+    mapD1 = L.map(el, {
+      zoomControl: true,
+      attributionControl: true,
+      scrollWheelZoom: false
+    });
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: "abcd",
+      maxZoom: 19
+    }).addTo(mapD1);
+
+    const line = (pathLatLngs && pathLatLngs.length > 1) ? pathLatLngs : (DAY1_PATH.length > 1 ? DAY1_PATH : DAY1_ROUTE.map(p => [p.lat, p.lng]));
+
+    L.polyline(line, {
+      color: "#007aff",
+      weight: 4,
+      opacity: 0.88,
+      lineJoin: "round",
+      lineCap: "round"
+    }).addTo(mapD1);
+
+    DAY1_ROUTE.forEach((p, i) => {
+      const kind = p.kind || "";
+      const icon = L.divIcon({
+        className: "",
+        html: `<div class="pin${kind ? " " + kind : ""}">${i + 1}</div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -14]
+      });
+      L.marker([p.lat, p.lng], { icon })
+        .addTo(mapD1)
+        .bindPopup(`<b>${i + 1}. ${p.name}</b><br><span style="color:#8e8e93">${p.time}</span>`);
+    });
+
+    mapD1.fitBounds(line, { padding: [28, 28], maxZoom: 14 });
+    mapD1Ready = true;
+  }
+
+  function initDay1Map() {
+    if (mapD1 || typeof L === "undefined") return;
+    drawDay1Route(typeof DAY1_PATH !== "undefined" ? DAY1_PATH : null);
+  }
+
+  function refreshDay1Map() {
+    if (!mapD1) initDay1Map();
+    else setTimeout(() => mapD1.invalidateSize(), 80);
+  }
+
   function showPanel(id) {
     $$(".panel").forEach(p => p.classList.toggle("active", p.dataset.panel === id));
     $$(".bottom-nav button").forEach(b => b.classList.toggle("active", b.dataset.nav === id));
     location.hash = id;
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    if (id === "d1") refreshDay1Map();
   }
 
   $$(".bottom-nav button").forEach(btn => {
@@ -847,6 +1133,12 @@
   // restore hash
   const hash = (location.hash || "#home").slice(1);
   if ($(`[data-panel="${hash}"]`)) showPanel(hash);
+  else if ($("#map-d1") && $(".panel.active")?.dataset.panel === "d1") refreshDay1Map();
+
+  // 预加载：切到第一天时再 init；若直接打开 #d1 已在 showPanel 处理
+  window.addEventListener("load", () => {
+    if ((location.hash || "").slice(1) === "d1") refreshDay1Map();
+  });
 
   // checkboxes
   const CHECK_KEY = "seoul-guide-checks-v1";
@@ -952,6 +1244,135 @@
     convert();
     toast("已恢复默认汇率");
   };
+
+  /* 美食约定：按钮跟在对应景点的时间行右侧（.spot-top），不占正文宽度。
+     以后发哪个景点，就在那个景点加按钮。
+     移动端整页下滑查看，菜单图直接铺开，不用手风琴。
+     图片归档到 food/<area>/01.jpg
+     字段 name · price · kind · where · note · addr · map · images[]
+     area 例：d2-hongdae */
+  const FOOD_SPOTS = [
+    {
+      area: "d2-hongdae",
+      name: "BHC Chicken Hongdae",
+      kind: "炸鸡",
+      where: "弘大 · 2层",
+      price: "约 ¥55",
+      note: "两人分一只整鸡（₩2.0–2.2万），人均约 ₩1.1万 ≈ ¥55。加饮料大约 ₩1.3–1.5万 / 人。不能混两种口味。",
+      addr: "Hongik-ro 6-gil 10, 2层",
+      map: "https://www.google.com/maps/search/?api=1&query=BHC+Chicken+Hongdae+Hongik-ro+6-gil+10",
+      images: ["food/d2-hongdae/01.jpg", "food/d2-hongdae/02.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "Super Coffee",
+      kind: "咖啡 · 下午茶",
+      where: "西桥洞 · 2层",
+      price: "约 ¥45",
+      note: "一杯饮品 ₩3,500–6,000，再加布丁或水果三明治大约 ₩8,000–1.1万 / 人 ≈ ¥40–55。招牌：奶油布丁、真果奶、水果三明治。",
+      addr: "486 2F, Seogyo-dong, Mapo-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=Super+Coffee+486+Seogyo-dong+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/03.jpg", "food/d2-hongdae/04.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "李太祖马铃薯排骨汤",
+      kind: "排骨汤",
+      where: "东桥路 · 弘大",
+      price: "约 ¥80",
+      note: "弘大最热门的排骨汤之一。两人份土豆排骨汤 ₩3.2万，人均 ₩1.6万 ≈ ¥80。营业约 10:30–22:30。",
+      addr: "196 Donggyo-ro, Mapo-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=196+Donggyo-ro+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/05.jpg", "food/d2-hongdae/06.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "给豚的男人",
+      kind: "济州猪肉",
+      where: "本店 · 弘大",
+      price: "约 ¥95",
+      note: "一人一份五花或颈肉 ₩1.9万 ≈ ¥95。套餐 540g ₩5.7万，两人分大约 ¥140 / 人。济州鲜肉，酱默认送。",
+      addr: "34-9 Jandari-ro 6-gil, Mapo-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=34-9+Jandari-ro+6-gil+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/07.jpg", "food/d2-hongdae/08.jpg", "food/d2-hongdae/09.jpg", "food/d2-hongdae/10.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "荒谬的生肉",
+      kind: "烤肉自助",
+      where: "弘大店",
+      price: "约 ¥87",
+      note: "五花/颈肉无限续，含大酱汤，成人 ₩17,900 / 人 ≈ ¥87。米饭 ₩1,000，每人点一份可无限续。",
+      addr: "118 Eoulmadang-ro, Mapo-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=118+Eoulmadang-ro+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/11.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "猪脚小姐",
+      kind: "酱猪蹄",
+      where: "弘大",
+      price: "约 ¥105",
+      note: "原味猪蹄中份 ₩4.3万，两人分人均约 ₩2.15万 ≈ ¥105。大份 ₩4.8万。",
+      addr: "123-1 Eoulmadang-ro, Mapo-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=123-1+Eoulmadang-ro+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/12.jpg"]
+    }
+  ];
+  const FOOD_TITLES = { "d2-hongdae": "弘大美食" };
+
+  function renderFood(area) {
+    const list = $("#food-list");
+    const items = FOOD_SPOTS.filter(s => s.area === area);
+    $("#food-title").textContent = FOOD_TITLES[area] || "美食";
+    if (!items.length) {
+      list.innerHTML = `<p class="food-empty">还没有收录。发店名、人均和图片过来，我会按同一格式补上。</p>`;
+      return;
+    }
+    list.innerHTML = items.map(s => {
+      const photos = (s.images || []).map(src => `<img src="${src}" alt="${s.name}">`).join("");
+      return `<article class="shop">
+        <div class="shop-top">
+          <div>
+            <div class="shop-name">${s.name}</div>
+            <div class="shop-meta">${[s.kind, s.where].filter(Boolean).join(" · ")}</div>
+          </div>
+          <div class="shop-side">
+            <div class="shop-price">${s.price || ""}</div>
+            <button type="button" class="shop-toggle" aria-label="展开菜单">
+              <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="shop-body">
+          ${s.note ? `<p class="shop-note">${s.note}</p>` : ""}
+          ${s.map ? `<a class="shop-map" href="${s.map}" target="_blank" rel="noopener">${s.addr || "打开地图"}</a>` : ""}
+          <div class="shop-photos">${photos}</div>
+        </div>
+      </article>`;
+    }).join("");
+    $$(".shop-toggle", list).forEach(btn => {
+      btn.onclick = () => {
+        const shop = btn.closest(".shop");
+        const open = shop.classList.toggle("open");
+        btn.setAttribute("aria-label", open ? "收起菜单" : "展开菜单");
+      };
+    });
+  }
+
+  function openFood(area) {
+    renderFood(area);
+    $("#food-sheet").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeFood() {
+    $("#food-sheet").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  $$("[data-food-area]").forEach(btn => {
+    btn.onclick = () => openFood(btn.dataset.foodArea);
+  });
+  $$("[data-food-close]").forEach(el => { el.onclick = closeFood; });
 })();
 </script>
 </body>
