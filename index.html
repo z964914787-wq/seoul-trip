@@ -677,6 +677,14 @@
   </div>
 
   <div class="card">
+    <div class="spot-top">
+      <h2 style="margin:0">便利店</h2>
+      <button type="button" class="food-chip" data-food-area="cvs">美食</button>
+    </div>
+    <p class="muted" style="margin:8px 0 0">首尔常见四家：<b>CU</b>、<b>GS25</b>、<b>7-ELEVEN</b>、<b>emart24</b>。路上都能买。</p>
+  </div>
+
+  <div class="card">
     <h2>关键提醒</h2>
     <div class="check-row" data-check="tip-visa"><input type="checkbox"><div><h3>团签 / 护照 PDF</h3><p class="muted">离线备份</p></div></div>
     <div class="check-row" data-check="tip-esim"><input type="checkbox"><div><h3>韩国 eSIM</h3><p class="muted">出发前装好</p></div></div>
@@ -1317,9 +1325,54 @@
       addr: "123-1 Eoulmadang-ro, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=123-1+Eoulmadang-ro+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/12.jpg"]
+    },
+    {
+      area: "cvs",
+      name: "延世牛奶生奶油面包",
+      kind: "TOP 1",
+      where: "CU 独家",
+      price: "约 ¥14",
+      note: "基础款 ₩2,700–2,800。累计约 1 亿个，常见对半切开打卡。",
+      images: ["food/cvs/01.png"]
+    },
+    {
+      area: "cvs",
+      name: "迪拜风味 Q 弹甜点",
+      kind: "TOP 2",
+      where: "CU · GS25",
+      price: "约 ¥17–21",
+      note: "₩3,500–4,400。开心果奶油夹脆丝，迪拜巧克力的便利店版。",
+      images: ["food/cvs/02.png"]
+    },
+    {
+      area: "cvs",
+      name: "冰焦糖布蕾",
+      kind: "TOP 3",
+      where: "GS25",
+      price: "约 ¥22",
+      note: "₩4,500 / 80g。用勺子敲碎焦糖脆壳再吃。",
+      images: ["food/cvs/03.png"]
+    },
+    {
+      area: "cvs",
+      name: "黑白厨师联名即食餐",
+      kind: "TOP 4",
+      where: "GS25",
+      price: "约 ¥19–20",
+      note: "₩3,800–4,000。Netflix《黑白厨师》主厨的菜做成即食餐。",
+      images: ["food/cvs/04.png"]
+    },
+    {
+      area: "cvs",
+      name: "生巧克力派",
+      kind: "TOP 5",
+      where: "7-ELEVEN 独家",
+      price: "约 ¥20",
+      note: "约 ₩4,000。日本乐天冷藏甜点。",
+      images: ["food/cvs/05.png"]
     }
   ];
-  const FOOD_TITLES = { "d2-hongdae": "弘大美食" };
+  const FOOD_TITLES = { "d2-hongdae": "弘大美食", cvs: "便利店美食" };
 
   function renderFood(area) {
     const list = $("#food-list");
