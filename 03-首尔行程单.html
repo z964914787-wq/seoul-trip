@@ -233,7 +233,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    width: 100%;
   }
+  .spot-top .time { margin-bottom: 0; }
   .food-chip {
     flex-shrink: 0;
     border: none;
@@ -302,6 +304,26 @@
   }
   .shop-name { font-size: 1.05rem; font-weight: 700; letter-spacing: -.02em; }
   .shop-meta { margin-top: 2px; font-size: .78rem; color: var(--muted); }
+  .shop-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 6px;
+    font-weight: 700;
+    color: #b25e00;
+    white-space: nowrap;
+  }
+  .shop-rating::before {
+    content: "★";
+    font-size: .72rem;
+    line-height: 1;
+  }
+  .shop-blurb {
+    margin: 6px 0 0;
+    font-size: .82rem;
+    color: var(--label);
+    line-height: 1.4;
+  }
   .shop-side {
     display: flex;
     align-items: center;
@@ -361,6 +383,10 @@
     border-top: .5px solid rgba(60,60,67,.1);
   }
   .check-row:first-child { border-top: none; padding-top: 2px; }
+  .check-row > div {
+    flex: 1;
+    min-width: 0;
+  }
   .check-row input {
     margin-top: 2px;
     width: 20px;
@@ -769,7 +795,10 @@
       <span class="tag">必去</span>
     </div></div>
     <div class="check-row" data-check="d1-4"><input type="checkbox"><div>
-      <div class="time">午间</div>
+      <div class="spot-top">
+        <div class="time">午间</div>
+        <button type="button" class="food-chip" data-food-area="d1-bukchon">美食</button>
+      </div>
       <h3>三清洞 → 北村韩屋村</h3>
       <p class="muted">同片区步行 · 午餐自选</p>
       <span class="tag food">午餐 · 三清洞/北村</span>
@@ -1253,19 +1282,21 @@
     toast("已恢复默认汇率");
   };
 
-  /* 美食约定：按钮跟在对应景点的时间行右侧（.spot-top），不占正文宽度。
-     以后发哪个景点，就在那个景点加按钮。
-     移动端整页下滑查看，菜单图直接铺开，不用手风琴。
-     图片归档到 food/<area>/01.jpg
-     字段 name · price · kind · where · note · addr · map · images[]
-     area 例：d2-hongdae */
+  /* 美食约定：按钮跟在对应景点的时间行右侧（.spot-top）。
+     发店名后补录：搜概况写 blurb（未展开时显示）+ note（展开详情）+ 图片。
+     图片归档 food/<area>/01.jpg
+     字段 name · blurb · price · kind · where · note · addr · map · images[]
+     area 例：d2-hongdae / d1-bukchon / cvs */
   const FOOD_SPOTS = [
     {
       area: "d2-hongdae",
       name: "BHC Chicken Hongdae",
+      blurb: "连锁炸鸡店，芝士粉、蜜酱油等口味最出名。",
       kind: "炸鸡",
       where: "弘大 · 2层",
       price: "约 ¥55",
+      rating: 3.6,
+      reviews: 321,
       note: "两人分一只整鸡（₩2.0–2.2万），人均约 ₩1.1万 ≈ ¥55。加饮料大约 ₩1.3–1.5万 / 人。不能混两种口味。",
       addr: "Hongik-ro 6-gil 10, 2层",
       map: "https://www.google.com/maps/search/?api=1&query=BHC+Chicken+Hongdae+Hongik-ro+6-gil+10",
@@ -1274,10 +1305,13 @@
     {
       area: "d2-hongdae",
       name: "Super Coffee",
+      blurb: "网红咖啡店，奶油布丁和真果奶是招牌。",
       kind: "咖啡 · 下午茶",
       where: "西桥洞 · 2层",
       price: "约 ¥45",
-      note: "一杯饮品 ₩3,500–6,000，再加布丁或水果三明治大约 ₩8,000–1.1万 / 人 ≈ ¥40–55。招牌：奶油布丁、真果奶、水果三明治。",
+      rating: 4.3,
+      reviews: 43,
+      note: "一杯饮品 ₩3,500–6,000，再加布丁或水果三明治大约 ₩8,000–1.1万 / 人 ≈ ¥40–55。",
       addr: "486 2F, Seogyo-dong, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=Super+Coffee+486+Seogyo-dong+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/03.jpg", "food/d2-hongdae/04.jpg"]
@@ -1285,10 +1319,13 @@
     {
       area: "d2-hongdae",
       name: "李太祖马铃薯排骨汤",
+      blurb: "弘大热门土豆排骨汤，大锅辣汤配土豆骨头。",
       kind: "排骨汤",
       where: "东桥路 · 弘大",
       price: "约 ¥80",
-      note: "弘大最热门的排骨汤之一。两人份土豆排骨汤 ₩3.2万，人均 ₩1.6万 ≈ ¥80。营业约 10:30–22:30。",
+      rating: 3.9,
+      reviews: 1179,
+      note: "两人份土豆排骨汤 ₩3.2万，人均 ₩1.6万 ≈ ¥80。营业约 10:30–22:30。",
       addr: "196 Donggyo-ro, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=196+Donggyo-ro+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/05.jpg", "food/d2-hongdae/06.jpg"]
@@ -1296,10 +1333,13 @@
     {
       area: "d2-hongdae",
       name: "给豚的男人",
+      blurb: "济州猪肉烤肉店，炭火厚切，酱默认送。",
       kind: "济州猪肉",
       where: "本店 · 弘大",
       price: "约 ¥95",
-      note: "一人一份五花或颈肉 ₩1.9万 ≈ ¥95。套餐 540g ₩5.7万，两人分大约 ¥140 / 人。济州鲜肉，酱默认送。",
+      rating: 4.7,
+      reviews: 524,
+      note: "一人一份五花或颈肉 ₩1.9万 ≈ ¥95。套餐 540g ₩5.7万，两人分大约 ¥140 / 人。",
       addr: "34-9 Jandari-ro 6-gil, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=34-9+Jandari-ro+6-gil+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/07.jpg", "food/d2-hongdae/08.jpg", "food/d2-hongdae/09.jpg", "food/d2-hongdae/10.jpg"]
@@ -1307,10 +1347,13 @@
     {
       area: "d2-hongdae",
       name: "荒谬的生肉",
+      blurb: "五花颈肉无限续，含大酱汤，适合吃到饱。",
       kind: "烤肉自助",
       where: "弘大店",
       price: "约 ¥87",
-      note: "五花/颈肉无限续，含大酱汤，成人 ₩17,900 / 人 ≈ ¥87。米饭 ₩1,000，每人点一份可无限续。",
+      rating: 4.2,
+      reviews: 1036,
+      note: "成人 ₩17,900 / 人 ≈ ¥87。米饭 ₩1,000，每人点一份可无限续。",
       addr: "118 Eoulmadang-ro, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=118+Eoulmadang-ro+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/11.jpg"]
@@ -1318,61 +1361,156 @@
     {
       area: "d2-hongdae",
       name: "猪脚小姐",
+      blurb: "酱猪蹄专门店，原味/蒜味/半半都常见。",
       kind: "酱猪蹄",
       where: "弘大",
       price: "约 ¥105",
+      rating: 4.2,
+      reviews: 1942,
       note: "原味猪蹄中份 ₩4.3万，两人分人均约 ₩2.15万 ≈ ¥105。大份 ₩4.8万。",
       addr: "123-1 Eoulmadang-ro, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=123-1+Eoulmadang-ro+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/12.jpg"]
     },
     {
+      area: "d1-bukchon",
+      name: "斋洞嫩豆腐",
+      blurb: "北村附近老牌嫩豆腐店，国产黄豆手作顺豆腐。",
+      kind: "嫩豆腐",
+      where: "斋洞 · 北村",
+      price: "约 ¥60",
+      rating: 4.2,
+      reviews: 475,
+      note: "海鲜嫩豆腐 / 草堂嫩豆腐 / 石锅拌饭约 ₩12,000 / 人 ≈ ¥60。豆腐锅中份 ₩3.5万（两人分）。",
+      addr: "Jaedong Soft Tofu, Bukchon",
+      map: "https://www.google.com/maps/search/?api=1&query=%EC%9E%AC%EB%8F%99%EC%88%9C%EB%91%90%EB%B6%80+Bukchon",
+      images: ["food/d1-bukchon/01.jpg", "food/d1-bukchon/02.jpg", "food/d1-bukchon/03.png"]
+    },
+    {
+      area: "d1-bukchon",
+      name: "Mukshidonna",
+      blurb: "三清洞即席辣炒年糕本店，自选口味和面，吃完炒饭。",
+      kind: "即席辣炒年糕",
+      where: "三清洞 · 2层",
+      price: "约 ¥40",
+      rating: 3.9,
+      reviews: 1208,
+      note: "2人套 ₩16,000（人均 ₩8,000 ≈ ¥40），含年糕·鱼饼·面·炸物。口味选蔬菜/部队/烤肉/海鲜，面选拉面/冷面/粉丝/乌冬。加芝士或炒饭各 +₩3,000。",
+      addr: "90-1 Samcheong-ro, Jongno-gu · 2F",
+      map: "https://www.google.com/maps/search/?api=1&query=Mukshidonna+90-1+Samcheong-ro+Jongno-gu+Seoul",
+      images: ["food/d1-bukchon/04.jpg", "food/d1-bukchon/05.jpg"]
+    },
+    {
+      area: "d1-bukchon",
+      name: "Snack Seoul",
+      blurb: "三清洞创意分食店，招牌紫苏油荞麦面和白切肉。",
+      kind: "创意韩餐 · 分食",
+      where: "八板街 · 2–3层",
+      price: "约 ¥60",
+      rating: 4.8,
+      reviews: 385,
+      note: "紫苏油冷/拌荞麦面 ₩12,000 / 人 ≈ ¥60。白切肉配紫苏酱 ₩22,000（两人分）。可配自酿米酒或炸物。",
+      addr: "46 Palpan-gil, Jongno-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=Snack+Seoul+46+Palpan-gil+Jongno-gu+Seoul",
+      images: ["food/d1-bukchon/06.png", "food/d1-bukchon/07.png", "food/d1-bukchon/08.jpg"]
+    },
+    {
+      area: "d1-bukchon",
+      name: "新罗制面",
+      blurb: "安国刀切面店，招牌烟熏辣炒章鱼拌面。",
+      kind: "刀切面",
+      where: "桂洞路 · 安国",
+      price: "约 ¥70",
+      rating: 4.6,
+      reviews: 395,
+      note: "辣炒章鱼刀切面（칼낙지）₩14,000 / 人 ≈ ¥70，需 2 人起订；加虾版 ₩16,000。文蛤刀切面 ₩11,000。可配薄片土豆饼。",
+      addr: "19-6 Gyedong-gil, Jongno-gu · 1F",
+      map: "https://www.google.com/maps/search/?api=1&query=%EC%8B%A0%EB%9D%BC%EC%A0%9C%EB%A9%B4+%EC%95%88%EA%B5%AD+19-6+Gyedong-gil",
+      images: ["food/d1-bukchon/09.jpg", "food/d1-bukchon/10.jpg"]
+    },
+    {
+      area: "d1-bukchon",
+      name: "Plop",
+      blurb: "北村韩屋风披萨店，可半半/四分拼口味。",
+      kind: "披萨",
+      where: "北村路2街 · 斋洞",
+      price: "约 ¥50",
+      rating: 4.9,
+      reviews: 1940,
+      note: "小份披萨（1–2人）₩15,000–17,000，两人拼半半约 ₩19,000（人均 ≈ ¥50）。薯条/烤意面可另点。常排队，可 Catchtable 预约。",
+      addr: "5 Bukchon-ro 2-gil, Jae-dong, Jongno-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=Plop+5+Bukchon-ro+2-gil+Jongno-gu+Seoul",
+      images: ["food/d1-bukchon/11.jpg", "food/d1-bukchon/12.jpg", "food/d1-bukchon/13.jpg"]
+    },
+    {
+      area: "d1-bukchon",
+      name: "三清洞面疙瘩",
+      blurb: "三清洞老牌手作面疙瘩，1982 年起，常排队。",
+      kind: "面疙瘩 · 水饺汤",
+      where: "三清洞",
+      price: "约 ¥50–100",
+      rating: 4.7,
+      note: "人均 ₩10,000–20,000 ≈ ¥50–100。招牌手作面疙瘩，可配葱饼、辣炒鱿鱼和米酒。无菜单。",
+      addr: "102-2 Samcheong-dong, Jongno-gu",
+      map: "https://www.google.com/maps/search/?api=1&query=%EC%82%BC%EC%B2%AD%EB%8F%99%EC%88%98%EC%A0%9C%EB%B9%84+102-2+Samcheong-dong",
+      images: ["food/d1-bukchon/14.jpg", "food/d1-bukchon/15.jpg"]
+    },
+    {
       area: "cvs",
       name: "延世牛奶生奶油面包",
+      blurb: "CU 独家网红奶油面包，常对半切开打卡。",
       kind: "TOP 1",
       where: "CU 独家",
       price: "约 ¥14",
-      note: "基础款 ₩2,700–2,800。累计约 1 亿个，常见对半切开打卡。",
+      note: "基础款 ₩2,700–2,800。累计约 1 亿个。",
       images: ["food/cvs/01.png"]
     },
     {
       area: "cvs",
       name: "迪拜风味 Q 弹甜点",
+      blurb: "开心果奶油夹脆丝，迪拜巧克力便利店版。",
       kind: "TOP 2",
       where: "CU · GS25",
       price: "约 ¥17–21",
-      note: "₩3,500–4,400。开心果奶油夹脆丝，迪拜巧克力的便利店版。",
+      note: "₩3,500–4,400。",
       images: ["food/cvs/02.png"]
     },
     {
       area: "cvs",
       name: "冰焦糖布蕾",
+      blurb: "焦糖脆壳用勺子敲碎再吃的冷藏甜点。",
       kind: "TOP 3",
       where: "GS25",
       price: "约 ¥22",
-      note: "₩4,500 / 80g。用勺子敲碎焦糖脆壳再吃。",
+      note: "₩4,500 / 80g。",
       images: ["food/cvs/03.png"]
     },
     {
       area: "cvs",
       name: "黑白厨师联名即食餐",
+      blurb: "Netflix《黑白厨师》主厨联名的便利店即食菜。",
       kind: "TOP 4",
       where: "GS25",
       price: "约 ¥19–20",
-      note: "₩3,800–4,000。Netflix《黑白厨师》主厨的菜做成即食餐。",
+      note: "₩3,800–4,000。",
       images: ["food/cvs/04.png"]
     },
     {
       area: "cvs",
       name: "生巧克力派",
+      blurb: "7-Eleven 引进的日本乐天冷藏生巧派。",
       kind: "TOP 5",
       where: "7-ELEVEN 独家",
       price: "约 ¥20",
-      note: "约 ₩4,000。日本乐天冷藏甜点。",
+      note: "约 ₩4,000。",
       images: ["food/cvs/05.png"]
     }
   ];
-  const FOOD_TITLES = { "d2-hongdae": "弘大美食", cvs: "便利店美食" };
+  const FOOD_TITLES = {
+    "d2-hongdae": "弘大美食",
+    "d1-bukchon": "北村美食",
+    cvs: "便利店美食"
+  };
 
   function renderFood(area) {
     const list = $("#food-list");
@@ -1384,11 +1522,18 @@
     }
     list.innerHTML = items.map(s => {
       const photos = (s.images || []).map(src => `<img src="${src}" alt="${s.name}">`).join("");
+      const rev = s.reviews >= 1000
+        ? `${(s.reviews / 1000).toFixed(1).replace(/\.0$/, "")}k`
+        : (s.reviews != null ? String(s.reviews) : "");
+      const rating = s.rating != null
+        ? `<span class="shop-rating" title="Google Maps">${s.rating}${rev ? ` · ${rev}` : ""}</span>`
+        : "";
       return `<article class="shop">
         <div class="shop-top">
           <div>
-            <div class="shop-name">${s.name}</div>
+            <div class="shop-name">${s.name}${rating}</div>
             <div class="shop-meta">${[s.kind, s.where].filter(Boolean).join(" · ")}</div>
+            ${s.blurb ? `<p class="shop-blurb">${s.blurb}</p>` : ""}
           </div>
           <div class="shop-side">
             <div class="shop-price">${s.price || ""}</div>
