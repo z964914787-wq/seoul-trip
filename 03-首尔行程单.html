@@ -236,6 +236,18 @@
     width: 100%;
   }
   .spot-top .time { margin-bottom: 0; }
+  .spot-top h3 { margin: 0; flex: 1; min-width: 0; }
+  .wx-chip {
+    flex-shrink: 0;
+    font-size: .68rem;
+    font-weight: 650;
+    color: #248a3d;
+    background: rgba(52,199,89,.12);
+    padding: 4px 9px;
+    border-radius: 980px;
+    white-space: nowrap;
+    line-height: 1.3;
+  }
   .food-chip {
     flex-shrink: 0;
     border: none;
@@ -246,6 +258,26 @@
     font-size: .72rem;
     font-weight: 700;
     line-height: 1.3;
+  }
+  .nav-chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent-soft);
+    color: var(--accent) !important;
+    border-radius: 980px;
+    padding: 4px 10px;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+  .chip-row {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
   }
   .food-sheet {
     position: fixed;
@@ -688,7 +720,7 @@
       <button type="button" class="mini" data-goto="d0"><p class="d">10/2–3</p><p class="t">出发夜</p><p class="p">龙岗→HKG→ICN过夜</p></button>
       <button type="button" class="mini" data-goto="d1"><p class="d">10/3</p><p class="t">Day1</p><p class="p">宫殿→入住→落日飞车</p></button>
       <button type="button" class="mini" data-goto="d2"><p class="d">10/4</p><p class="t">Day2</p><p class="p">弘大⅔→盘浦→夜公演</p></button>
-      <button type="button" class="mini" data-goto="d3"><p class="d">10/5</p><p class="t">Day3</p><p class="p">圣水→COEX→DDP→飞</p></button>
+      <button type="button" class="mini" data-goto="d3"><p class="d">10/5</p><p class="t">Day3</p><p class="p">DDP→圣水→COEX→飞</p></button>
     </div>
     <p class="muted" style="margin:10px 0 0">点卡片可跳到当天 Tabs</p>
   </div>
@@ -775,18 +807,23 @@
       <span class="tag food">早餐 · 机场</span>
     </div></div>
     <div class="check-row" data-check="d1-2"><input type="checkbox"><div>
-      <div class="time">早班 · ~1h</div>
+      <div class="spot-top">
+        <div class="time">早班 · ~1h</div>
+        <a class="nav-chip" href="https://maps.app.goo.gl/GQh7bXeNictehQAW7" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>6002 → 光化门</h3>
       <p class="muted">T1 1层跟指示牌 · 示例 08:33→09:35 · 约 ₩17,000/人</p>
-      <a class="map-btn" href="https://maps.app.goo.gl/GQh7bXeNictehQAW7" target="_blank" rel="noopener">导航 ICN→光化门</a>
     </div></div>
     <div class="check-row" data-check="d1-buy"><input type="checkbox"><div>
       <div class="time">到光化门就办</div>
-      <h3>买「落日飞车」票 ★</h3>
+      <div class="spot-top">
+        <h3>买「落日飞车」票 ★</h3>
+        <span class="wx-chip" title="Open-Meteo · 首尔 10/3">晴 · 晚约20° · 无雨</span>
+      </div>
       <p class="muted">城市观光巴士夜景线 · 光化门上车也在光化门结束 · 一班程 <b>19:00</b></p>
       <p class="muted">售票处约在 <b>5 号线光化门站 6 号口</b> 前 · 也可提前网约（KKday / 官网）</p>
       <span class="tag">须预约</span>
-      <p class="note">⚠ 天气不好可改不去 · 开票前看预报 · 出发前 30 分钟到柜台取实体票</p>
+      <p class="note">10/3 预报：白天约 23°/10° · 19:00 前后晴、约 20°、降雨≈0% · 适合坐 · 出发前再核对</p>
     </div></div>
     <div class="check-row" data-check="d1-3"><input type="checkbox"><div>
       <div class="time">上午</div>
@@ -804,10 +841,12 @@
       <span class="tag food">午餐 · 三清洞/北村</span>
     </div></div>
     <div class="check-row" data-check="d1-5"><input type="checkbox"><div>
-      <div class="time">14:00 后</div>
+      <div class="spot-top">
+        <div class="time">14:00 后</div>
+        <a class="nav-chip" href="https://maps.app.goo.gl/82e5MhLKKJ2CHYje9" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>北村 → 安国 → 弘济入住</h3>
       <p class="muted">步行~10min → 3号线大化方向 4站 → 弘济再走~5min</p>
-      <a class="map-btn" href="https://maps.app.goo.gl/82e5MhLKKJ2CHYje9" target="_blank" rel="noopener">导航北村→酒店</a>
     </div></div>
     <div class="check-row" data-check="d1-6"><input type="checkbox"><div>
       <div class="time">入住后</div>
@@ -849,7 +888,10 @@
   <p class="muted" style="margin-top:0">白天逛约 ⅔ · 傍晚盘浦 · 夜归顺路弘大街演。</p>
   <div class="card">
     <div class="check-row" data-check="d2-0"><input type="checkbox"><div>
-      <div class="time">酒店出发</div>
+      <div class="spot-top">
+        <div class="time">酒店出发</div>
+        <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=Hongik+University+Station%2C+Mapo-gu%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>弘济 → 弘大入口</h3>
       <p class="muted">3 号线 → 乙支路 3 街换 2 号线 → 弘大入口</p>
     </div></div>
@@ -866,18 +908,24 @@
       <p class="note">WITHMUU 4 口 · Beluga 9 口 · 白天先 ①②，③ 晚再补</p>
     </div></div>
     <div class="check-row" data-check="d2-2"><input type="checkbox"><div>
-      <div class="time">16:30 动身</div>
+      <div class="spot-top">
+        <div class="time">16:30 动身</div>
+        <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=40+Sinbanpo-ro+11-gil%2C+Seocho+District%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>前往盘浦汉江公园</h3>
       <p class="muted">地铁 9 号线 <b>新盘浦站</b> · 或公交 <b>盘浦大桥南端</b></p>
       <span class="tag">Banpo Hangang Park</span>
       <p class="note">✓ 弘大 2 号线 → 堂山换 9 号线 → 新盘浦</p>
     </div></div>
     <div class="check-row" data-check="d2-3"><input type="checkbox"><div>
-      <div class="time">18:00</div>
+      <div class="spot-top">
+        <div class="time">18:00</div>
+        <button type="button" class="food-chip" data-food-area="d2-banpo">晚餐 · 汉江拉面</button>
+      </div>
       <h3>左边 · 散步看日落</h3>
       <p class="muted">西侧 <b>西来岛（서래섬）</b> · 约 18:10 日落</p>
       <span class="tag">左 · 日落</span>
-      <span class="tag food">便利店野餐</span>
+      <span class="tag food">晚餐 · 汉江拉面</span>
     </div></div>
     <div class="check-row" data-check="d2-4"><input type="checkbox"><div>
       <div class="time">19:00 → 19:30</div>
@@ -887,22 +935,28 @@
       <p class="note">淡季周日：19:30 / 20:00 / 20:30 / 21:00</p>
     </div></div>
     <div class="check-row" data-check="d2-5"><input type="checkbox"><div>
-      <div class="time">喷泉后 · 顺路</div>
+      <div class="spot-top">
+        <div class="time">喷泉后 · 顺路</div>
+        <div class="chip-row">
+          <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=Hongik+University+Station%2C+Mapo-gu%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航 · 弘大</a>
+          <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=21+Tongil-ro+37na-gil%2C+Seodaemun-gu%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">回酒店</a>
+        </div>
+      </div>
       <h3>回程经弘大 · 夜街演</h3>
       <p class="muted">新盘浦 → 堂山换 2 号 → <b>弘大入口</b> · ③ 逛街看公演区 · 街边 busking</p>
       <span class="tag">③ 夜公演</span>
       <span class="tag food">晚餐 · 弘大</span>
       <p class="note">看够后再 2→3 号线回弘济酒店</p>
     </div></div>
-    <div class="food-box"><b>美食位：</b>①下午茶 ______ · ②午餐 ______ · 盘浦 ______ · 夜弘大 ______</div>
+    <div class="food-box"><b>美食位：</b>①下午茶 ______ · ②午餐 ______ · 盘浦 汉江拉面 · 夜弘大 ______</div>
   </div>
 </section>
 
 <!-- Day 3 -->
 <section class="panel" data-panel="d3" id="panel-d3">
   <p class="day-label">Day 3 · 10/5 周一</p>
-  <h2 class="day-title">圣水 · COEX · DDP</h2>
-  <p class="muted" style="margin-top:0">退房东线收束，傍晚赴仁川。</p>
+  <h2 class="day-title">DDP · 圣水 · COEX</h2>
+  <p class="muted" style="margin-top:0">2 号线东线一路顺下去，傍晚从三成赴仁川。</p>
   <div class="card">
     <div class="check-row" data-check="d3-1"><input type="checkbox"><div>
       <div class="time">11:00 前</div>
@@ -910,33 +964,43 @@
       <p class="muted">可问前台暂存 · 核护照/团签/机票</p>
     </div></div>
     <div class="check-row" data-check="d3-2"><input type="checkbox"><div>
-      <div class="time">10:30–12:30</div>
-      <h3>圣水洞</h3>
-      <p class="muted">工业风咖啡 · 慢慢走</p>
-      <span class="tag food">早午餐 · 圣水</span>
+      <div class="spot-top">
+        <div class="time">11:30–13:30</div>
+        <div class="chip-row">
+          <button type="button" class="food-chip" data-food-area="d3-ddp">美食</button>
+          <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=281+Eulji-ro%2C+Jung+District%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+        </div>
+      </div>
+      <h3>东大门 DDP</h3>
+      <p class="muted">建筑本身就是景 · 不必钻批发楼 · 午餐顺路</p>
+      <span class="tag food">午餐 · 东大门</span>
+      <p class="note">✓ 弘济 3 号线 → 乙支路 3 街换 2 号线 → 东大门历史文化公园</p>
     </div></div>
     <div class="check-row" data-check="d3-3"><input type="checkbox"><div>
-      <div class="time">13:00–14:30</div>
-      <h3>COEX · 星空图书馆</h3>
-      <p class="muted">拍照 30–50 分钟够 · 别耗赴机缓冲</p>
+      <div class="time">13:30–15:30</div>
+      <h3>圣水洞</h3>
+      <p class="muted">同线继续东行 · 工业风咖啡 · 慢慢走</p>
+      <span class="tag food">咖啡 · 圣水</span>
+      <p class="note">✓ 2 号线往建大/蚕室方向 · 约 6–7 站</p>
     </div></div>
     <div class="check-row" data-check="d3-4"><input type="checkbox"><div>
-      <div class="time">15:00–17:00</div>
-      <h3>东大门 DDP</h3>
-      <p class="muted">建筑本身就是景 · 不必钻批发楼</p>
+      <div class="time">15:30–16:30</div>
+      <h3>COEX · 星空图书馆</h3>
+      <p class="muted">三成站 · 拍照 30–50 分钟够 · 别耗赴机缓冲</p>
+      <p class="note">✓ 圣水 2 号线继续 · 约 4 站到三成 · 5/6 号口</p>
     </div></div>
     <div class="check-row" data-check="d3-5"><input type="checkbox"><div>
       <div class="time">17:00–18:00</div>
       <h3>动身赴仁川</h3>
       <p class="muted">22:30 起飞 · 建议此前后离开 · AREX 更稳</p>
-      <p class="note">✓ 宁早勿赶 · 快运值机别踩点</p>
+      <p class="note">✓ 三成 2 号线 → 首尔站换 AREX · 宁早勿赶</p>
     </div></div>
     <div class="check-row" data-check="d3-6"><input type="checkbox"><div>
       <div class="time">22:30→</div>
       <h3>UO615 · ICN → HKG T1</h3>
       <p class="muted">落地后香港机场过夜</p>
     </div></div>
-    <div class="food-box"><b>美食位：</b>圣水 ______ · 路上 ______ · 赴机前 ______</div>
+    <div class="food-box"><b>美食位：</b>东大门 유가네닭갈비 · 圣水咖啡 ______ · 赴机前 ______</div>
   </div>
 </section>
 
@@ -1286,8 +1350,62 @@
      发店名后补录：搜概况写 blurb（未展开时显示）+ note（展开详情）+ 图片。
      图片归档 food/<area>/01.jpg
      字段 name · blurb · price · kind · where · note · addr · map · images[]
-     area 例：d2-hongdae / d1-bukchon / cvs */
+     area 例：d2-hongdae / d1-bukchon / d2-banpo / d3-ddp / cvs */
   const FOOD_SPOTS = [
+    {
+      area: "d3-ddp",
+      name: "유가네닭갈비 동대문점",
+      blurb: "连锁春川鸡排骨，铁板现炒；东大门 B1，午餐套餐划算。",
+      kind: "春川鸡排骨",
+      where: "东大门 · B1",
+      price: "约 ¥70",
+      rating: 4.9,
+      reviews: 1747,
+      note: "两人套（2인세트）₩28,500 ≈ ¥70/人，含杂锦配料+饮料。招牌腌制鸡排 ₩10,000/人；炒饭 ₩7,500–8,000 可饭后铁板炒。",
+      addr: "9 B1 Eulji-ro 43-gil, Jung District, Seoul",
+      map: "https://www.google.com/maps/search/?api=1&query=9+B1+Eulji-ro+43-gil+Jung+District+Seoul",
+      images: ["food/d3-ddp/01.jpg", "food/d3-ddp/02.jpg"]
+    },
+    {
+      area: "d3-ddp",
+      name: "현주네 금돼지",
+      blurb: "东大门烤肉老店，午餐火锅/汤饭更划算；晚上可吃五花肉烤。",
+      kind: "烤肉 · 午餐汤饭",
+      where: "东大门 · 1F",
+      price: "约 ¥60",
+      rating: 4.9,
+      reviews: 159,
+      note: "午餐菜单 11:00–16:00：脊骨汤/烤牛肉火锅 ₩12,000、辛奇汤 ₩10,000、生牛肉拌饭 ₩15,000 ≈ ¥50–75/人。正餐五花/梅花肉 ₩19,000/180g。",
+      addr: "현주네 금돼지 1F, Jung District, Seoul",
+      map: "https://www.google.com/maps/search/?api=1&query=%ED%98%84%EC%A3%BC%EB%84%A4+%EA%B8%88%EB%8F%BC%EC%A7%80+Jung+District+Seoul",
+      images: ["food/d3-ddp/03.jpg", "food/d3-ddp/04.jpg", "food/d3-ddp/05.jpg"]
+    },
+    {
+      area: "d3-ddp",
+      name: "김가네 동대문디자인플라자점",
+      blurb: "DDP 地下 2 层连锁紫菜包饭，快吃快走，菜单全、价格亲民。",
+      kind: "紫菜包饭 · 小吃",
+      where: "DDP Market · B2 D6",
+      price: "约 ¥40",
+      rating: 4.7,
+      reviews: 62,
+      note: "紫菜包饭 ₩4,500–6,500；石锅拌饭/炒饭/拉面约 ₩7,000–10,500 ≈ ¥35–50/人。在 DDP 商场内，看完建筑顺路吃最方便。",
+      addr: "지하2층 281 을지로, 중구, DDP마켓 D6호",
+      map: "https://www.google.com/maps/search/?api=1&query=%EA%B9%80%EA%B0%80%EB%84%A4+%EB%8F%99%EB%8C%80%EB%AC%B8%EB%94%94%EC%9E%90%EC%9D%B8%ED%94%8C%EB%9D%BC%EC%9E%90%EC%A0%90+DDP",
+      images: ["food/d3-ddp/06.jpg", "food/d3-ddp/07.jpg", "food/d3-ddp/08.jpg"]
+    },
+    {
+      area: "d2-banpo",
+      name: "7-Eleven 서래나루점",
+      blurb: "盘浦汉江公园左侧 · 西来岛旁，店内可煮即食拉面，经典汉江拉面体验。",
+      kind: "便利店 · 汉江拉面",
+      where: "盘浦 · 西来岛",
+      price: "约 ¥20",
+      note: "买杯面后用店内电磁炉煮。建议日落前到，找户外座位边看江边吃。",
+      addr: "Olympic-daero, Seocho District, Seoul",
+      map: "https://www.google.com/maps/search/?api=1&query=7-Eleven+Seorae+Naru+Olympic-daero+Seocho+District+Seoul",
+      images: []
+    },
     {
       area: "d2-hongdae",
       name: "BHC Chicken Hongdae",
@@ -1371,6 +1489,20 @@
       addr: "123-1 Eoulmadang-ro, Mapo-gu",
       map: "https://www.google.com/maps/search/?api=1&query=123-1+Eoulmadang-ro+Mapo-gu+Seoul",
       images: ["food/d2-hongdae/12.jpg"]
+    },
+    {
+      area: "d2-hongdae",
+      name: "橋村炸雞",
+      blurb: "韩国连锁炸鸡名店，蒜酱油与青阳红辣是招牌；半半可一次吃两种。",
+      kind: "炸鸡",
+      where: "弘大 · 杨花路",
+      price: "约 ¥58",
+      rating: 4.0,
+      reviews: 2078,
+      note: "整鸡/半半约 ₩21,000–24,000，两人分人均 ≈ ¥55–60。红系列偏辣；原味后炸+甜酸酱、蒜酱油半半最常点。",
+      addr: "6 Yanghwa-ro 16-gil, Mapo-gu, Seoul",
+      map: "https://www.google.com/maps/search/?api=1&query=Kyochon+Chicken+6+Yanghwa-ro+16-gil+Mapo-gu+Seoul",
+      images: ["food/d2-hongdae/13.jpg", "food/d2-hongdae/14.jpg", "food/d2-hongdae/15.jpg"]
     },
     {
       area: "d1-bukchon",
@@ -1509,6 +1641,8 @@
   const FOOD_TITLES = {
     "d2-hongdae": "弘大美食",
     "d1-bukchon": "北村美食",
+    "d2-banpo": "盘浦 · 汉江拉面",
+    "d3-ddp": "东大门美食",
     cvs: "便利店美食"
   };
 
