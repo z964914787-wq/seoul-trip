@@ -315,12 +315,31 @@
     letter-spacing: -.02em;
     padding-right: 52px;
   }
-  #food-list {
+  #food-list, #customs-list {
     flex: 1;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     padding: 12px 12px calc(20px + var(--safe-b));
   }
+  .tip-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .tip-card h3 {
+    margin: 0 0 6px;
+    font-size: .95rem;
+  }
+  .tip-card p, .tip-card li {
+    margin: 0;
+    font-size: .84rem;
+    color: var(--label);
+    font-weight: 450;
+  }
+  .tip-card ul { margin: 6px 0 0; padding-left: 1.1em; }
+  .tip-card li + li { margin-top: 4px; }
+  .tip-card .warn { color: #b25e00; font-weight: 650; }
   .shop {
     background: #fff;
     border-radius: 18px;
@@ -744,10 +763,15 @@
 
   <div class="card">
     <h2>关键提醒</h2>
-    <div class="check-row" data-check="tip-visa"><input type="checkbox"><div><h3>团签 / 护照 PDF</h3><p class="muted">离线备份</p></div></div>
-    <div class="check-row" data-check="tip-esim"><input type="checkbox"><div><h3>韩国 eSIM</h3><p class="muted">出发前装好</p></div></div>
+    <div class="check-row" data-check="tip-visa"><input type="checkbox" checked><div><h3>团签 / 护照 PDF</h3><p class="muted">已出签 · 入境出示确认书 · 签发号 E261052917</p></div></div>
+    <div class="check-row" data-check="d0-eac"><input type="checkbox" checked><div>
+      <h3>韩国入境申报</h3>
+      <p class="muted">已提交 · 两人已填 · 入境前留着邮件编号截图</p>
+      <a class="map-btn" href="https://www.e-arrivalcard.go.kr/portal/main/index.do?locale=CH" target="_blank" rel="noopener">打开官网申报</a>
+    </div></div>
+    <div class="check-row" data-check="tip-esim"><input type="checkbox" checked><div><h3>韩国 eSIM</h3><p class="muted">已买 · 出发前装好</p></div></div>
     <div class="check-row" data-check="tip-tmoney"><input type="checkbox"><div><h3>T-money / 交通卡</h3><p class="muted">到韩后充值</p></div></div>
-    <div class="check-row" data-check="tip-plug"><input type="checkbox"><div><h3>欧标圆头插头</h3><p class="muted">Type C/F</p></div></div>
+    <div class="check-row" data-check="tip-plug"><input type="checkbox" checked><div><h3>欧标圆头插头</h3><p class="muted">已买 · Type C/F</p></div></div>
   </div>
 </section>
 
@@ -757,13 +781,6 @@
   <h2 class="day-title">上路 · 机场过夜</h2>
   <p class="muted" style="margin-top:0">龙岗出发，红眼飞仁川，枕头在航站楼。</p>
   <div class="card">
-    <div class="check-row" data-check="d0-eac"><input type="checkbox"><div>
-      <div class="time">入境前 3 天内</div>
-      <h3>韩国入境申报</h3>
-      <p class="muted">电子入境卡 e-Arrival Card · 两人各填 · 免费 · 10/3 抵韩，约 <b>10/1 起</b>可提交</p>
-      <p class="note">提交后 72 小时内入境有效 · 保存邮件里的编号截图</p>
-      <a class="map-btn" href="https://www.e-arrivalcard.go.kr/portal/main/index.do?locale=CH" target="_blank" rel="noopener">打开官网申报</a>
-    </div></div>
     <div class="check-row slot-like" data-check="d0-1"><input type="checkbox"><div>
       <div class="time">下午</div>
       <h3>深圳龙岗万达出发</h3>
@@ -818,12 +835,12 @@
       <div class="time">到光化门就办</div>
       <div class="spot-top">
         <h3>买「落日飞车」票 ★</h3>
-        <span class="wx-chip" title="Open-Meteo · 首尔 10/3">晴 · 晚约20° · 无雨</span>
+        <span class="wx-chip" title="Open-Meteo · 首尔 10/3">傍晚转晴 · 晚约18° · 无雨</span>
       </div>
       <p class="muted">城市观光巴士夜景线 · 光化门上车也在光化门结束 · 一班程 <b>19:00</b></p>
       <p class="muted">售票处约在 <b>5 号线光化门站 6 号口</b> 前 · 也可提前网约（KKday / 官网）</p>
       <span class="tag">须预约</span>
-      <p class="note">10/3 预报：白天约 23°/10° · 19:00 前后晴、约 20°、降雨≈0% · 适合坐 · 出发前再核对</p>
+      <p class="note">10/3 预报：白天约 21°/11° · 午后多云、18:00 后转晴 · 19:00 约 18°、晴，20:00 约 17° · 降雨 0% · 适合坐 · 出发前再核对</p>
     </div></div>
     <div class="check-row" data-check="d1-3"><input type="checkbox"><div>
       <div class="time">上午</div>
@@ -864,6 +881,7 @@
       <div class="time">19:00–~21:00</div>
       <h3>落日飞车（夜景线）</h3>
       <p class="muted">光化门发 · 同站收 · 约 1.5–2h · 汉江 / 南山塔（可下车拍 20–30min）等</p>
+      <p class="note">南山塔日落亮到 23:00 · 颜色跟当天超细粉尘：蓝好 / 绿一般 / 黄差 / 红很差 · 开天节没有另发特别色 · 上层带一件薄外套</p>
       <span class="tag">Tour04 夜景</span>
     </div></div>
     <div class="check-row" data-check="d1-9"><input type="checkbox"><div>
@@ -977,28 +995,43 @@
       <p class="note">✓ 弘济 3 号线 → 乙支路 3 街换 2 号线 → 东大门历史文化公园</p>
     </div></div>
     <div class="check-row" data-check="d3-3"><input type="checkbox"><div>
-      <div class="time">13:30–15:30</div>
+      <div class="spot-top">
+        <div class="time">13:30–15:30</div>
+        <div class="chip-row">
+          <a class="food-chip" href="https://www.google.com/maps/place/POD+RITUAL+%EC%84%B1%EC%88%98/data=!4m13!1m7!2m6!1z5ZKW5ZWh!3m4!2z5Zyj5rC05rSeIFllb25tdWphbmctZ2lsLCBTZW9uZ2RvbmctZ3UsIFNlb3VsLCDpn6nlm70!3s0x357ca5006ffcead3:0x87c9d6173ff74f72!4m1!4s8Q99G3R4%2BWFRJ9M4!3m4!1s0x357ca556061cc911:0xba458a844d260b04!15sCgblkpbllaFaCCIG5ZKW5ZWhkgEEY2FmZeABAA!16s%2Fg%2F11nj5763hd!20s8Q99G3V4%2B9F3M324?entry=ttu&g_ep=EgoyMDI2MDkyMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">咖啡</a>
+          <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=Yeonmujang-gil%2C+Seongdong-gu%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+        </div>
+      </div>
       <h3>圣水洞</h3>
       <p class="muted">同线继续东行 · 工业风咖啡 · 慢慢走</p>
       <span class="tag food">咖啡 · 圣水</span>
       <p class="note">✓ 2 号线往建大/蚕室方向 · 约 6–7 站</p>
     </div></div>
     <div class="check-row" data-check="d3-4"><input type="checkbox"><div>
-      <div class="time">15:30–16:30</div>
+      <div class="spot-top">
+        <div class="time">15:30–16:30</div>
+        <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=Starfield+COEX+Mall+B1%2C+513+Yeongdong-daero%2C+Gangnam+District%2C+Seoul%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>COEX · 星空图书馆</h3>
       <p class="muted">三成站 · 拍照 30–50 分钟够 · 别耗赴机缓冲</p>
       <p class="note">✓ 圣水 2 号线继续 · 约 4 站到三成 · 5/6 号口</p>
     </div></div>
     <div class="check-row" data-check="d3-5"><input type="checkbox"><div>
-      <div class="time">17:00–18:00</div>
+      <div class="spot-top">
+        <div class="time">17:00–18:00</div>
+        <a class="nav-chip" href="https://www.google.com/maps/dir/?api=1&destination=Incheon+International+Airport+Terminal+1%2C+Incheon%2C+South+Korea&travelmode=transit" target="_blank" rel="noopener">导航</a>
+      </div>
       <h3>动身赴仁川</h3>
       <p class="muted">22:30 起飞 · 建议此前后离开 · AREX 更稳</p>
       <p class="note">✓ 三成 2 号线 → 首尔站换 AREX · 宁早勿赶</p>
     </div></div>
     <div class="check-row" data-check="d3-6"><input type="checkbox"><div>
-      <div class="time">22:30→</div>
+      <div class="spot-top">
+        <div class="time">22:30→</div>
+        <button type="button" class="food-chip" data-customs-open>行李</button>
+      </div>
       <h3>UO615 · ICN → HKG T1</h3>
-      <p class="muted">落地后香港机场过夜</p>
+      <p class="muted">落地后香港机场过夜 · 化妆品别整箱同款</p>
     </div></div>
     <div class="food-box"><b>美食位：</b>东大门 유가네닭갈비 · 圣水咖啡 ______ · 赴机前 ______</div>
   </div>
@@ -1056,7 +1089,7 @@
 
   <div class="card">
     <h2>参考汇率（可改）</h2>
-    <p class="muted">默认约 2026-08 市场中值，出行前按银行/兑换点再改。</p>
+    <p class="muted">默认 2026-10-02 首尔买卖基准价：人民币 202.55、港币 173.29；人民币兑港币 1.1688。兑换点再改。</p>
     <div class="rate-edit">
       <label class="muted">1 人民币 = <input id="rate-cny-krw" type="number" inputmode="decimal" step="0.01" /> 韩元</label>
       <label class="muted">1 港币 = <input id="rate-hkd-krw" type="number" inputmode="decimal" step="0.01" /> 韩元</label>
@@ -1125,15 +1158,70 @@
   <div id="food-list"></div>
 </div>
 
+<div class="food-sheet" id="customs-sheet">
+  <div class="food-bar">
+    <button type="button" class="food-back" data-customs-close>返回</button>
+    <h2>返程行李</h2>
+  </div>
+  <div id="customs-list">
+    <article class="tip-card">
+      <h3>卡在哪</h3>
+      <p>这条线是仁川 → 香港过夜 → 再回龙岗。自用化妆品在韩国出境、香港入境通常没事。博主被查，多半是<strong>从香港进内地</strong>的时候。</p>
+    </article>
+    <article class="tip-card">
+      <h3>免税额度</h3>
+      <ul>
+        <li>年满 18 岁、从港澳进境的居民：境外买的个人合理自用，总值 <b>¥12,000 以内</b>免税（2024 年第 7 号公告，2024-08 起各口岸）。</li>
+        <li>若在口岸进境免税店再买，连同境外物品合计 <b>¥15,000</b>。</li>
+        <li>超出只对超出部分征税；一件拆不开的按整件征税。</li>
+        <li>15 天内多次往返港澳，只放行旅途必需品。你们这次单程，按 1.2 万。</li>
+      </ul>
+    </article>
+    <article class="tip-card">
+      <h3 class="warn">化妆品为什么会被卡</h3>
+      <p>2025-04-01 起（海关总署令第 276 号）不再按「几瓶」卡死，但必须<strong>合理自用</strong>。同款未拆封堆很多、看着像转卖，就按货物办：征税、退运，严重的还可能处罚。</p>
+      <ul>
+        <li>两人自用、不同品类几套：一般可以。</li>
+        <li>整箱同一款面膜 / 精华：容易被拦。</li>
+        <li>超额度后，普通化妆品综合税率约 20%；单价 ≥10 元/毫升或 ≥15 元/片的高档化妆品约 50%。</li>
+      </ul>
+    </article>
+    <article class="tip-card">
+      <h3>别带进内地</h3>
+      <p>农业农村部、海关总署公告第 470 号：新鲜水果蔬菜、肉类及肉制品、奶和奶制品、蛋、带土鲜人参、种子。韩式火腿、奶酪、鲜奶、水果都算。密封干零食、茶、泡面、干燥红参自用少量通常可以，现场仍可能抽查。</p>
+    </article>
+    <article class="tip-card">
+      <h3 class="warn">快运：超重就要托运</h3>
+      <p>UO615 是香港快运。市区买的水乳单瓶超过 100 毫升，不能手提过安检，只能托运。安检后免税店的封口袋没拆，才可以带上飞机。</p>
+      <ul>
+        <li>轻便飞 / 随心飞：只含一件小包 40×25×20 厘米，一共 7 公斤。头顶箱要另买。</li>
+        <li>经济飞 / 无忧飞：可多一件登机箱 56×36×23，加上小包仍一共 7 公斤。</li>
+        <li>闸口才查出超重超件，每件改托运约 800 港币。网上提前买 20 公斤托运大约 310 港币起，机场更贵。</li>
+      </ul>
+      <p class="muted" style="margin-top:8px">以客票上的票价种类为准，值机前再对一次官网。</p>
+    </article>
+    <article class="tip-card">
+      <h3>这趟怎么买</h3>
+      <ul>
+        <li>先看客票是不是轻便飞。大瓶护肤品要么少买、塞进 7 公斤，要么提前买托运，别拖到闸口。</li>
+        <li>化妆品按两人自己用，留小票，别为了凑 1.2 万塞满。</li>
+        <li>韩国现金超过 1 万美元要向韩国海关申报。</li>
+        <li>回龙岗过关被问，说自用即可。</li>
+      </ul>
+      <p class="muted" style="margin-top:8px">依据截至 2026-09 仍有效的上述公告。现场以当班海关为准。</p>
+    </article>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 (function () {
   const DEFAULTS = {
-    cnyKrw: 205.2,
-    hkdKrw: 186.5,
-    cnyHkd: 1.1
+    cnyKrw: 202.55,
+    hkdKrw: 173.29,
+    cnyHkd: 1.1688
   };
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -1243,6 +1331,7 @@
 
   // checkboxes
   const CHECK_KEY = "seoul-guide-checks-v1";
+  const DEFAULT_DONE = { "tip-visa": true, "tip-esim": true, "tip-plug": true, "d0-eac": true };
   function loadChecks() {
     try { return JSON.parse(localStorage.getItem(CHECK_KEY) || "{}"); } catch { return {}; }
   }
@@ -1254,7 +1343,7 @@
     $$("[data-check]").forEach(row => {
       const id = row.dataset.check;
       const box = row.querySelector('input[type="checkbox"]');
-      box.checked = !!map[id];
+      box.checked = Object.prototype.hasOwnProperty.call(map, id) ? !!map[id] : !!DEFAULT_DONE[id];
       row.classList.toggle("done", box.checked);
       box.onchange = () => {
         map[id] = box.checked;
@@ -1271,7 +1360,7 @@
   };
 
   // FX
-  const RATE_KEY = "seoul-guide-rates-v1";
+  const RATE_KEY = "seoul-guide-rates-v4";
   function loadRates() {
     try {
       return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(RATE_KEY) || "{}"));
@@ -1705,6 +1794,17 @@
     btn.onclick = () => openFood(btn.dataset.foodArea);
   });
   $$("[data-food-close]").forEach(el => { el.onclick = closeFood; });
+
+  function openCustoms() {
+    $("#customs-sheet").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeCustoms() {
+    $("#customs-sheet").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  $$("[data-customs-open]").forEach(btn => { btn.onclick = openCustoms; });
+  $$("[data-customs-close]").forEach(el => { el.onclick = closeCustoms; });
 })();
 </script>
 </body>
